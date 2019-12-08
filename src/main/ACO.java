@@ -144,13 +144,18 @@ public class ACO {
 	 */
 	public void updatePheromone() {
 		//iterate through every city.
-		for(Leg leg: graph.getLegs()) {
-			double pheromone = leg.getPheremone() * (1 - this.params.getRho());
-			//add pheromone for every ant that traveled the leg
-			for(Ant ant: colony) if(ant.tourHasLeg(leg)) pheromone += 1; // (1/ant.getDist)
-			//if the best path travels the leg add pheremone.
-			if (this.bestPath.tourHasLeg(leg)) pheromone += this.params.getElitism_factor(); // * (1/this.bestPath.getDist());
-			this.graph.setPheromone(leg, pheromone);//set the leg to the new pheromone.
+		ArrayList<Leg> updatedLegs = new ArrayList<Leg>();
+		for(Node node: graph.getNodes()) for(Node ne: node.getNeighbors()) {
+			Leg leg = graph.getLeg(node, ne);
+			if(!updatedLegs.contains(leg)){
+				double pheromone = leg.getPheremone() * (1 - this.params.getRho());
+				//add pheromone for every ant that traveled the leg
+				for(Ant ant: colony) if(ant.tourHasLeg(leg)) pheromone += 1; // (1/ant.getDist)
+				//if the best path travels the leg add pheremone.
+				if (this.bestPath.tourHasLeg(leg)) pheromone += this.params.getElitism_factor(); // * (1/this.bestPath.getDist());
+				this.graph.setPheromone(leg, pheromone);//set the leg to the new pheromone.
+				updatedLegs.add(leg);
+			}
 		}
 	}
 
