@@ -8,7 +8,6 @@ import main.ACO.Type;
 public class Params {
 	//parameters for stop cases
 	private int iterLimit;
-	private double satPercent;
 	private double satLimit = 0;//initialize to base case of zero incase it isn't changed
 	private long timeLimit;
 	//parameters controlling type of aco
@@ -32,7 +31,7 @@ public class Params {
 	 * Initialize parameters object for the Elitist Ant Colony type of ACO
 	 */
 	public Params(String optFile, int num_ants, int num_iterations, double alpha,
-			double beta, double rho, double eFactor, double satPercent, long timeLimit, double optDist) {
+			double beta, double rho, double eFactor, double satLimit, long timeLimit, double optDist) {
 		this.optFile = optFile;
 		this.numOf_ants = num_ants;
 		this.numOf_iterations = num_iterations;
@@ -41,42 +40,16 @@ public class Params {
 		this.rho = rho;
 		this.elitism_factor = num_ants;
 		this.type = Type.eac;
-		this.satPercent = satPercent;
+		this.satLimit = satLimit;
 		this.timeLimit = timeLimit * 1000;
 		this.optDist = optDist;
 	}
 
-	/*
-	 * Initialize parameters object for the Ant Colony System type of ACO
-	 */
-	public Params(String optFile, int num_ants, int num_iterations, double alpha,
-			double beta, double rho, double epsilon, double q_0, double satPercent, 
-			long timeLimit, double optDist, Graph graph) {
-		this.optFile = optFile;
-		this.numOf_ants = num_ants;
-		this.numOf_iterations = num_iterations;
-		this.alpha = alpha;
-		this.beta = beta;
-		this.rho = rho;
-		this.epsilon = epsilon;
-		this.q_0 = q_0;
-		this.type = Type.acs;
-		this.satPercent = satPercent;
-		this.timeLimit = timeLimit * 1000;
-		this.optDist = optDist;		
-		this.graph = graph;
-	}
 	
-	/*
-	 * Calculate the tour length that will satisfy the tour length stop case.
-	 */
-	public void calcSatLimit(double opt) {
-		this.satLimit = opt + ((opt / 100) * (100-satPercent));
-	}
 	
 	public void print() {
 		System.out.print("ants-"+this.numOf_ants+ " iter-"+this.numOf_iterations+ " a-"+this.alpha+ " b-"+
-				this.beta+ "rho-"+this.rho+ " epsi-"+this.epsilon+" qo-"+this.q_0+" sat-"+this.satPercent+
+				this.beta+ "rho-"+this.rho+ " epsi-"+this.epsilon+" qo-"+this.q_0+" sat-"+this.satLimit+
 				"tMax-"+this.timeLimit+ " optDist-"+this.optDist);
 	}
 	
@@ -107,9 +80,7 @@ public class Params {
 	public double getQ_0() {
 		return q_0;
 	}
-	public double getSatPercent(){
-		return satPercent;
-	}
+
 	public double getSatLimit() {
 		return satLimit;
 	}

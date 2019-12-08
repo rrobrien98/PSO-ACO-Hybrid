@@ -6,6 +6,7 @@ import main.ACO;
 
 public class PSO {
 	
+	//PARAMS DEF START
 	public enum Topology { 
 		gl, ri, vn, ra, _error;
 		public static int RA_NHOOD_SIZE = 5;
@@ -16,15 +17,17 @@ public class PSO {
 	double PHI = 2.05; 
 	double[] posRanges = {15.0, 30.0};
 	double[] velRanges = {-2.0, 4.0};
+	//PARAMS DEF END
+	
 	
 	
 	Params params;
 	ArrayList <Particle> particles;
 	Particle gBest; 
-	Boolean bestFound = false; // make sure we change this value
+	Boolean bestFound = false;
 	int iterationCount = 0;
 	Random rand = new Random();
-	ArrayList<Integer> progress;
+	ArrayList<Integer> progress; //UI
 	
 	public PSO(Params params){
 		this.params = params;
@@ -37,9 +40,9 @@ public class PSO {
 	private void runPSO() {
 		initParticles();
 		setNeighbors();
-		System.out.print("Progress: ");
+		System.out.print("Progress: "); //UI
 		while(iterationCount < params.getMaxIter() && !bestFound) {
-			_progressReport();
+			_progressReport(); //UI
 			evalParticles();
 			update_Pbests();
 			update_Gbest();
@@ -146,8 +149,7 @@ public class PSO {
 	private void evalParticles() {
 		for (int i = 0; i < params.getSwarmSize(); i++) {
 			Particle particle = particles.get(i);
-			Double val = null; 
-			evalACO(particles);
+			int val = this.evalACO(particle);
 			particle.setVal(val);
 		}
 	}
@@ -157,7 +159,7 @@ public class PSO {
 	
 	
 	/*
-	 *  ---- TEST FUNCTIONS  ----
+	 *  ---- ACO TEST FUNCTION  ----
 	 */
 	
 	// description
@@ -172,54 +174,12 @@ public class PSO {
 						particle.getBeta(),
 						particle.getRho(),
 						particle.getEFactor(),
-						params.ACO_Params.getSatPercent(), 
+						params.ACO_Params.getSatLimit(), 
 						params.ACO_Params.getTimeLimit(), 
 						params.ACO_Params.getOptDist())
 				).get_res();
-		return res.getCount();
+		return res.getBestPath().getTourLen();
 	}
-	
-	
-	private double evalRosenbrock (Particle particle) {
-		double retVal = 0;
-		for (int i = 0; i < params.getMaxDim() - 1; i++) {
-			double val = particle.getCoords()[i];
-			double next_val = particle.getCoords()[i+1];
-		    retVal += 100* Math.pow(next_val - val*val, 2.0) + Math.pow(val-1.0, 2.0);
-		}
-		return retVal;
-	}
-	// description
-	private double evalRastrigin (Particle particle) {
-	
-		double retVal = 0;
-		for (int i = 0; i < params.getMaxDim(); i++) {
-			double val = particle.getCoords()[i];
-			retVal+= val * val - 10.0*Math.cos(2.0*Math.PI*val) + 10.0;
-		}
-		return retVal;
-	}
-	// description
-	private double evalSphere (Particle particle) {
-		double retVal = 0;
-		for (int i = 0; i < params.getMaxDim(); i++) {
-			double val = particle.getCoords()[i];
-			retVal += val * val;
-		}
-		return retVal;
-	} 
-	// description
-	private double evalAckley(Particle particle) {
-		   double firstSum = 0;
-		   double secondSum = 0;
-		   for (int i = 0; i < params.getMaxDim(); i++) {
-			   firstSum += particle.getCoords()[i] * particle.getCoords()[i];
-			   secondSum += Math.cos(2.0*Math.PI*particle.getCoords()[i]);
-		   }
-		   return -20.0 * Math.exp(-0.2 * Math.sqrt(firstSum/2.0)) - 
-		     Math.exp(secondSum/2.0) + 20.0 + Math.E;
-	}
-	
 	
 	
 	
@@ -232,7 +192,7 @@ public class PSO {
 	private void update_Pbests() {
 		for (int i = 0; i < this.particles.size(); i++) {
 			Particle currParticle = this.particles.get(i);
-			if (currParticle.getCurrVal() < currParticle.getPbestval()) {
+			if (currParticle.getCurrVal() > currParticle.getPbestval()) {
 				currParticle.setPbestval(currParticle.getCurrVal());
 				currParticle.setPbest(currParticle.getCoords().clone());
 			}
@@ -241,7 +201,7 @@ public class PSO {
 	private void update_Gbest() {
 		for (int i = 0; i < this.particles.size(); i++) {
 			Particle currParticle = particles.get(i);
-			if (currParticle.getCurrVal() < gBest.getCurrVal()) {
+			if (currParticle.getCurrVal() > gBest.getCurrVal()) {
 				gBest = currParticle.clone();
 				if(gBest.getCurrVal() == 0.0) bestFound = true;
 			}
@@ -264,36 +224,31 @@ public class PSO {
 	
 	// descriptions
 	public Result getResult() {
-		return new Result(gBest, iterationCount, params.getTopology(), params.getTestFunc());
+		return new Result(gBest, iterationCount, params.getTopology());
 	}
 	class Result{
 		private Particle gBest;
 		private int iterationCount;
 		private Topology topology;
-		private TestFunc testFunc;
-		public Result(Particle gBest, int iterationCount, Topology topology, TestFunc testFunc) {
+		public Result(Particle gBest, int iterationCount, Topology topology) {
 			this.gBest = gBest;
 			this.iterationCount = iterationCount;
 			this.topology = topology;
-			this.testFunc = testFunc;
 		}
 		public void print() {
 			System.out.println("\n\n----  ** PSO RESULTS ** ----\n");
 			System.out.println("Best Found: "+this.gBest.getCurrVal());
 			System.out.println("Topology: "+this.topology);
-			System.out.println("Test Func: "+this.testFunc);
 			System.out.println("Iterations: "+this.iterationCount);
 		}
 		//getters
 		public Particle getGBest() {return gBest;}
 		public int getIterCount() {return iterationCount;}
-		public Topology getTopology() {return topology;}
-		public TestFunc getTestFunc() {return testFunc;}
-		
+		public Topology getTopology() {return topology;}		
 	}
 	
 	
-	// shows progress in terminal
+	// shows progress in terminal -- UI
 	private void _progressReport() {
 		if(iterationCount != 0) {
 			double progress = ((double)iterationCount/(double)params.getMaxIter())*100;

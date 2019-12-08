@@ -1,7 +1,5 @@
 package main;
 
-import main.Lab.Error;
-
 public class Lab {
 
 	public static void main(String[] args) {
@@ -10,13 +8,10 @@ public class Lab {
 		
 		//PSO
 		//general params
-		double CHI = 0.7298; // constriction Factor
-		double PHI = 2.05; 
-		double[] posRanges = {15.0, 30.0};
-		double[] velRanges = {-2.0, 4.0};
 		
 		
-		//---------------------------
+		// start pso, get values from res, isolate max value
+		
 		
 		
 		

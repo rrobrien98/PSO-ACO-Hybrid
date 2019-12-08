@@ -4,53 +4,47 @@ import java.util.ArrayList;
 
 public class Ant {
 	
-	private ArrayList<Integer> tour;
-	private double dist;
-	private int currCity;
+	private ArrayList<Node> tour;
+	private Node currNode;
 	
-	
-	public Ant(int city) {
-		this.setTour(new ArrayList<Integer>());
-		this.setCurrCity(city);
-		this.setDist(Double.MAX_VALUE);
+	// default init ant
+	public Ant(Node node) {
+		this.setTour(new ArrayList<Node>());
+		this.setCurrNode(node);
 	}
 	
+	// create ant with tour already performed -- used to combine ant tours
+	public Ant(ArrayList<Node> tour) {
+		this.tour = tour;
+		this.currNode = tour.get(tour.size()-1);
+	}
+	
+	// cloning
 	public Ant(Ant model) {
 		this.tour = model.tour;
-		this.dist = model.dist;
-		this.currCity = model.currCity;
+		this.currNode = model.currNode;
 	}
 	public Ant clone() {return new Ant(this);}
 
 	
-	public double getDist() {
-		return dist;
-	}
-
-	public void setDist(double dist) {
-		this.dist = dist;
-	}
-
-	public int getCurrCity() {
-		return currCity;
-	}
-
-	public void setCurrCity(int currCity) {
-		this.currCity = currCity;
-	}
-
-	public ArrayList<Integer> getTour() {
-		return tour;
-	}
-
-	public void setTour(ArrayList<Integer> tour) {
-		this.tour = tour;
-	}
+	
+	
+	// getters and setters
+	
+	public int getTourLen() { return tour.size(); }
+	
+	public Node getCurrNode() { return currNode; }
+		
+	public ArrayList<Node> getTour() { return tour; }
+	
+	public void setCurrNode(Node node) { currNode = node; }
+	
+	public void setTour(ArrayList<Node> tour) {this.tour = tour; }
 
 
-	public boolean tourHasLeg(int i, int j) {
-		int index_i = this.tour.indexOf(i);
-		int next_index; int prev_index;
+	public boolean tourHasLeg(Leg leg) {
+		int next_index, prev_index;
+		int index_i = this.tour.indexOf(leg.getNodeA());
 		if(index_i == 0) {
 			next_index = 1;
 			prev_index = this.tour.size()-1;
@@ -61,22 +55,20 @@ public class Ant {
 			next_index = index_i+1;
 			prev_index = index_i-1;
 		}
-		if (this.tour.get(next_index) == j || this.tour.get(prev_index) == j) return true;
+		if (this.tour.get(next_index).equals(leg.getNodeB()) || this.tour.get(prev_index).equals(leg.getNodeB())) return true;
 		return false;
 	}
 	
 
-	public void moveToCity(int city, double dist) {
-		this.dist = (this.dist == Double.MAX_VALUE) ? dist : this.dist+dist;
-		this.setCurrCity(city);
-		this.tour.add(city);
+	public void moveToNode(Node node) {
+		this.setCurrNode(node);
+		this.tour.add(node);
 	}
 	
 	
-	public void reset(int city){
-		this.setTour(new ArrayList<Integer>());
-		this.setCurrCity(city);
-		this.setDist(0);
+	public void reset(Node node){
+		this.setTour(new ArrayList<Node>());
+		this.setCurrNode(node);
 	}
 
 	

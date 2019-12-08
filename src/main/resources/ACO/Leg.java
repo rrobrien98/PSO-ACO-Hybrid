@@ -9,12 +9,24 @@ public class Leg {
 	private double pheremone;
 	private double dist;
 	
+	private Node nodeA;
+	private Node nodeB;
+	
 	/*
 	 * constructor for a leg. Takes an initial amount of pheremone and a distance
 	 */
-	public Leg(double pheremone, double dist) {
+	public Leg(double pheromone, Node nodeA ,Node nodeB) {
 		this.setPheremone(pheremone);
-		this.setDist(dist);
+		this.nodeA = nodeA;
+		this.nodeB = nodeB;
+	}
+	
+	public boolean hasNodes(Node nodeA, Node nodeB) {
+		if(this.nodeA.equals(nodeA) && this.nodeB.equals(nodeB) ||
+			this.nodeB.equals(nodeA) && this.nodeA.equals(nodeB)) {
+			return true;
+		}
+		return false;
 	}
 
 	/*
@@ -32,4 +44,8 @@ public class Leg {
 	public void setDist(double dist) {
 		this.dist = dist;
 	}
+	
+	public Node getNodeA() {return nodeA;}
+	public Node getNodeB() {return nodeB;}
 }
+
