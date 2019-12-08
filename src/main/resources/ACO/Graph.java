@@ -7,7 +7,7 @@ public class Graph {
 	
 	Random rand = new Random();
 	ArrayList<Leg> legs = new ArrayList<Leg>();
-	ArrayList<Node> nodes = new ArrayList<Node>(); 
+	ArrayList<Node> nodes = new ArrayList<Node>();
 	
 	
 	public Graph() {
@@ -21,7 +21,12 @@ public class Graph {
 	
 	// returns non-colored adjacent nodes, given current node for given ant.
 	public ArrayList<Node> getClearNodes(Ant ant){
-		return null; // <<===== NEED SOME HELP HERE.. SHOULD NOT BE HARD! :)
+		ArrayList<Node> clearNodes = new ArrayList<Node>();
+		Node currNode = ant.getCurrNode();
+		for(Node adjNode: ant.getCurrNode().getNeighbors()) {
+			if(this.getLeg(currNode, adjNode).getColor() == null) clearNodes.add(adjNode);
+		}
+		return clearNodes;
 	}
 	
 	// returns a random node from graph
@@ -42,7 +47,7 @@ public class Graph {
 	
 	
 	// return leg by using identifiers from each node - i.e. int node.id
-	// orther of params should not matter
+	// order of params should not matter
 	public Leg getLeg(Node nodeA, Node nodeB) {
 		for(Leg leg: legs) if(leg.hasNodes(nodeA, nodeB)) return leg;
 		return null;

@@ -6,8 +6,13 @@ package main.resources.ACO;
  * The amount of pheremone on the leg and the distance of the leg
  */
 public class Leg {
+	
+	public enum Color{ red, blue, green }
+	
 	private double pheremone;
 	private double dist;
+	
+	private Color color;
 	
 	private Node nodeA;
 	private Node nodeB;
@@ -43,6 +48,12 @@ public class Leg {
 	}
 	public void setDist(double dist) {
 		this.dist = dist;
+	}
+	public Color getColor(){
+		return this.color;
+	}
+	public void setColor(Color color) {
+		this.color = color;
 	}
 	
 	public Node getNodeA() {return nodeA;}
