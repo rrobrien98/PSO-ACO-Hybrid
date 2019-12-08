@@ -5,13 +5,14 @@ import java.util.Random;
 
 public class Graph {
 	
-	Random rand = new Random();
-	ArrayList<Leg> legs = new ArrayList<Leg>();
-	ArrayList<Node> nodes = new ArrayList<Node>();
-	
+	private Random rand = new Random();
+	private ArrayList<Leg> legs = new ArrayList<Leg>();
+	private ArrayList<Node> nodes = new ArrayList<Node>();
+	private Hashmap<string, Node> = new Hashmap<string, Node>;
 	
 	public Graph() {
-		// <<===== NEED SOME HELP HERE..  you can inspire yourself from tsp.java -- delete tsp.java afterward!
+		// <===== NEED SOME HELP HERE..  you can inspire yourself from tsp.java -- delete tsp.java afterward!
+		
 	}
 	
 	// return total number of nodes in graph
@@ -47,7 +48,7 @@ public class Graph {
 	
 	
 	// return leg by using identifiers from each node - i.e. int node.id
-	// order of params should not matter
+	// order of params does not matter
 	public Leg getLeg(Node nodeA, Node nodeB) {
 		for(Leg leg: legs) if(leg.hasNodes(nodeA, nodeB)) return leg;
 		return null;
