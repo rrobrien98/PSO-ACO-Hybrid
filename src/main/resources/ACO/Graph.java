@@ -1,5 +1,7 @@
 package main.resources.ACO;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -10,9 +12,44 @@ public class Graph {
 	private ArrayList<Node> nodes = new ArrayList<Node>();
 	private Hashmap<string, Node> = new Hashmap<string, Node>;
 	
-	public Graph() {
-		// <===== NEED SOME HELP HERE..  you can inspire yourself from tsp.java -- delete tsp.java afterward!
-		
+	String filename;
+	public Graph(String filename) {
+		this.filename = filename;
+	}
+	public void constructGraph() {
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(this.filename));
+			String line;
+			Boolean firstEdge = false;
+			Boolean readNodes = false;
+			while(((line = br.readLine())!=null)) {
+				String[] parts = line.trim().split(" ");
+				//once it finds the first city start storing coordinates
+				if (!line.trim().startsWith("%")) {
+					readNodes = false;
+					firstEdge = true;
+				}
+				else if(readNodes) {
+					this.graph = new ArrayList[(int) Math.max(Double.parseDouble(parts[2]), Double.parseDouble(parts[2]))]
+				}
+				else {
+					readNodes = true;
+				}
+				if(firstEdge) {
+					if (this.graph[parts[0]] == null) {
+						this.graph[parts[0]] = new ArrayList<Leg>();
+					}
+					//need to change leg initializer
+					this.graph[parts[0]].add(new Leg());
+				}
+			}
+			br.close();
+		} catch (FileNotFoundException e) {
+			System.out.print("Input File Not Found.");
+		} catch (IOException e) {
+			System.out.print("IO error in br.readline()");
+			e.printStackTrace();
+		}
 	}
 	
 	// return total number of nodes in graph
