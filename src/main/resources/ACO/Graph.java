@@ -3,14 +3,15 @@ package main.resources.ACO;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 public class Graph {
 	
 	private Random rand = new Random();
-	private ArrayList<Leg> legs = new ArrayList<Leg>();
+	//private ArrayList<Leg> legs = new ArrayList<Leg>();
 	private ArrayList<Node> nodes = new ArrayList<Node>();
-	private Hashmap<string, Node> = new Hashmap<string, Node>;
+	private HashMap<String, Leg> legs= new HashMap<String, Leg>(); // must populate via addLeg
 	
 	String filename;
 	public Graph(String filename) {
@@ -84,17 +85,25 @@ public class Graph {
 	}
 	
 	
-	// return leg by using identifiers from each node - i.e. int node.id
-	// order of params does not matter
-	public Leg getLeg(Node nodeA, Node nodeB) {
-		for(Leg leg: legs) if(leg.hasNodes(nodeA, nodeB)) return leg;
-		return null;
+	// add new leg to leg collection. make sure that direction is impotent
+	public void addLeg(Node nodeA, Node nodeB) {
+		Leg leg = legs.get(Integer.toString(nodeA.getId()) + Integer.toString(nodeB.getId()) );
+		if(leg != null) return;
+		legs.put(Integer.toString(nodeA.getId()) + Integer.toString(nodeB.getId()), new Leg(0, nodeA, nodeB));
 	}
 	
 	
-	// returns all legs
-	public ArrayList<Leg> getLegs(){
-		return this.legs;
+	// return leg by using identifiers from each node - i.e. int node.id
+	// order of params does not matter.. 
+	public Leg getLeg(Node nodeA, Node nodeB) {
+		Leg leg = legs.get(Integer.toString(nodeA.getId()) + Integer.toString(nodeB.getId()) );
+		if(leg == null) legs.get(Integer.toString(nodeB.getId()) + Integer.toString(nodeA.getId()) );
+		return leg;
+	}
+	
+	
+	public ArrayList<Node> getNodes(){
+		return this.nodes;
 	}
 	
 	
