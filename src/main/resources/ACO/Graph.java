@@ -1,21 +1,24 @@
 package main.resources.ACO;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
 public class Graph {
-	
+	private int colors;
 	private Random rand = new Random();
 	//private ArrayList<Leg> legs = new ArrayList<Leg>();
 	private ArrayList<Node> nodes = new ArrayList<Node>();
 	private HashMap<String, Leg> legs= new HashMap<String, Leg>(); // must populate via addLeg
 	
 	String filename;
-	public Graph(String filename) {
+	public Graph(String filename, int colors) {
 		this.filename = filename;
+		this.colors = colors;
 	}
 	public void constructGraph() {
 		try {
@@ -27,21 +30,22 @@ public class Graph {
 				String[] parts = line.trim().split(" ");
 				//once it finds the first city start storing coordinates
 				if (!line.trim().startsWith("%")) {
-					readNodes = false;
 					firstEdge = true;
 				}
 				else if(readNodes) {
-					this.graph = new ArrayList[(int) Math.max(Double.parseDouble(parts[2]), Double.parseDouble(parts[2]))]
+					for (int i = 0; i < Math.max(Double.parseDouble(parts[2]), Double.parseDouble(parts[2])); i++) {
+						nodes.add(new Node(i));
+					}
 				}
 				else {
 					readNodes = true;
 				}
 				if(firstEdge) {
-					if (this.graph[parts[0]] == null) {
-						this.graph[parts[0]] = new ArrayList<Leg>();
-					}
-					//need to change leg initializer
-					this.graph[parts[0]].add(new Leg());
+					Node nodeA = this.nodes.get(Integer.parseInt(parts[0]));
+					Node nodeB = this.nodes.get(Integer.parseInt(parts[1]));
+					this.addLeg(nodeA, nodeB);
+					nodeA.addNeighbor(nodeB);
+					nodeB.addNeighbor(nodeA);
 				}
 			}
 			br.close();
@@ -63,7 +67,7 @@ public class Graph {
 		ArrayList<Node> clearNodes = new ArrayList<Node>();
 		Node currNode = ant.getCurrNode();
 		for(Node adjNode: ant.getCurrNode().getNeighbors()) {
-			if(this.getLeg(currNode, adjNode).getColor() == null) clearNodes.add(adjNode);
+			if(this.getLeg(currNode, adjNode).getColor() == -1) clearNodes.add(adjNode);
 		}
 		return clearNodes;
 	}
@@ -89,7 +93,7 @@ public class Graph {
 	public void addLeg(Node nodeA, Node nodeB) {
 		Leg leg = legs.get(Integer.toString(nodeA.getId()) + Integer.toString(nodeB.getId()) );
 		if(leg != null) return;
-		legs.put(Integer.toString(nodeA.getId()) + Integer.toString(nodeB.getId()), new Leg(0, nodeA, nodeB));
+		legs.put(Integer.toString(nodeA.getId()) + Integer.toString(nodeB.getId()), new Leg(0, nodeA, nodeB,this.colors));
 	}
 	
 	
@@ -108,11 +112,11 @@ public class Graph {
 	
 	
 	// set pheromone to leg
-	public void setPheromone(Leg leg, double pheromone) {
-		this.getLeg(leg.getNodeA(), leg.getNodeB()).setPheremone(pheromone);
+	public void setPheromone(Leg leg, double[] pheromone) {
+		for (int i = 0; i < pheromone.length;i++) {
+			leg.setPheremone(pheromone[i], i);
+		}
 	}
-	
-	
 	
 	
 	

@@ -6,11 +6,13 @@ public class Ant {
 	
 	private ArrayList<Node> tour;
 	private Node currNode;
+	private boolean stop;
 	
 	// default init ant
 	public Ant(Node node) {
 		this.setTour(new ArrayList<Node>());
 		this.setCurrNode(node);
+		this.stop = false;
 	}
 	
 	// create ant with tour already performed -- used to combine ant tours
@@ -40,7 +42,13 @@ public class Ant {
 	public void setCurrNode(Node node) { currNode = node; }
 	
 	public void setTour(ArrayList<Node> tour) {this.tour = tour; }
-
+	public void stop() {
+		this.stop = true;
+	}
+	
+	public boolean cont() {
+		return !this.stop;
+	}
 
 	public boolean tourHasLeg(Leg leg) {
 		int next_index, prev_index;
@@ -60,7 +68,7 @@ public class Ant {
 	}
 	
 
-	public void moveToNode(Node node) {
+	public void moveToNode(Node node,int color) {
 		this.setCurrNode(node);
 		this.tour.add(node);
 	}

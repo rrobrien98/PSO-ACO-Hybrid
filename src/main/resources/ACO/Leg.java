@@ -7,23 +7,26 @@ package main.resources.ACO;
  */
 public class Leg {
 	
-	public enum Color{ red, blue, green }
+
 	
-	private double pheremone;
+	private double[] pheremone;
 	private double dist;
 	
-	private Color color;
-	
+	private int colors;
+	private int color;
 	private Node nodeA;
 	private Node nodeB;
 	
 	/*
 	 * constructor for a leg. Takes an initial amount of pheremone and a distance
 	 */
-	public Leg(double pheromone, Node nodeA ,Node nodeB) {
-		this.setPheremone(pheremone);
+	public Leg(double pheromone, Node nodeA ,Node nodeB, int colors) {
+		this.pheremone = new double[colors];
+		this.color = -1;
 		this.nodeA = nodeA;
 		this.nodeB = nodeB;
+		this.colors = colors;
+		
 	}
 	
 	public boolean hasNodes(Node nodeA, Node nodeB) {
@@ -37,11 +40,15 @@ public class Leg {
 	/*
 	 * Getters and setters for leg variables.
 	 */
-	public double getPheremone() {
-		return pheremone;
+	public double getPheremone(int color) {
+		return pheremone[color];
 	}
-	public void setPheremone(double pheremone) {
-		this.pheremone = pheremone;
+	public void setPheremone(double pheremone, int color) {
+		this.pheremone[color] = pheremone;
+	}
+	public double [] getPheremoneArray() {
+		return this.pheremone;
+	}
 	}
 	public double getDist() {
 		return dist;
@@ -49,14 +56,23 @@ public class Leg {
 	public void setDist(double dist) {
 		this.dist = dist;
 	}
-	public Color getColor(){
+	public int getColor(){
 		return this.color;
 	}
-	public void setColor(Color color) {
+	public void setColor(int color) {
 		this.color = color;
 	}
 	
 	public Node getNodeA() {return nodeA;}
 	public Node getNodeB() {return nodeB;}
+
+	public double getTotalPheremone() {
+		// TODO Auto-generated method stub
+		double total = 0;
+		for (int i = 0; i < this.pheremone.length; i++) {
+			total += this.pheremone[i];
+		}
+		return total;
+	}
 }
 
