@@ -1,17 +1,41 @@
 package main;
+import main.resources.ACO.Graph;
+import main.resources.PSO.Params;
 
 public class Lab {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
 		
-		//PSO
-		//general params
+		int swarmSize = Integer.parseInt(args[0]);
+		int maxIter = Integer.parseInt(args[2]);
+		int maxDim = Integer.parseInt(args[4]);
 		
+		String fileName = "";
+		int numOf_colors = 10;
+		
+		Graph graph = new Graph(fileName, numOf_colors);
+		
+		
+		// initialize PSO instance
+		System.out.println("Initializing PSO ...");
+		main.resources.PSO.Params psoParams = new Params(
+				PSO.Topology.ra,
+				PSO.FinalSettings.posRanges,
+				PSO.FinalSettings.velRanges,
+				PSO.FinalSettings.CHI,
+				PSO.FinalSettings.PHI,
+				swarmSize,
+				maxIter,
+				maxDim,
+				graph
+		);
+		PSO pso = new PSO(psoParams);
+		
+		// pso terminated
+		PSO.Result res = pso.getResult();
+		res.print();
 		
 		// start pso, get values from res, isolate max value
-		
 		
 		
 		
@@ -21,7 +45,7 @@ public class Lab {
 
 	
 	// error handling
-	enum Error{illegalArgs, testFunc, topology}
+	public enum Error{illegalArgs, testFunc, topology}
 	public static void throwError(Error err) {
 		String generalMsg = 
 				"\n------------------------------------------------\n"+

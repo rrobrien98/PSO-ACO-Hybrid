@@ -9,10 +9,9 @@ public class Leg {
 	
 
 	
-	private double[] pheremone;
+	private double[] pheromone;
 	private double dist;
 	
-	private int colors;
 	private int color;
 	private Node nodeA;
 	private Node nodeB;
@@ -21,12 +20,10 @@ public class Leg {
 	 * constructor for a leg. Takes an initial amount of pheremone and a distance
 	 */
 	public Leg(double pheromone, Node nodeA ,Node nodeB, int colors) {
-		this.pheremone = new double[colors];
+		this.pheromone = new double[colors];
 		this.color = -1;
 		this.nodeA = nodeA;
 		this.nodeB = nodeB;
-		this.colors = colors;
-		
 	}
 	
 	public boolean hasNodes(Node nodeA, Node nodeB) {
@@ -41,14 +38,13 @@ public class Leg {
 	 * Getters and setters for leg variables.
 	 */
 	public double getPheremone(int color) {
-		return pheremone[color];
+		return pheromone[color];
 	}
 	public void setPheremone(double pheremone, int color) {
-		this.pheremone[color] = pheremone;
+		this.pheromone[color] = pheremone;
 	}
-	public double [] getPheremoneArray() {
-		return this.pheremone;
-	}
+	public double [] getPheromoneArray() {
+		return this.pheromone;
 	}
 	public double getDist() {
 		return dist;
@@ -69,8 +65,8 @@ public class Leg {
 	public double getTotalPheremone() {
 		// TODO Auto-generated method stub
 		double total = 0;
-		for (int i = 0; i < this.pheremone.length; i++) {
-			total += this.pheremone[i];
+		for (int i = 0; i < this.pheromone.length; i++) {
+			total += this.pheromone[i];
 		}
 		return total;
 	}

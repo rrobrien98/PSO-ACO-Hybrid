@@ -13,10 +13,13 @@ public class PSO {
 		public static int VN_ARRAY_HEIGHT = 4; // description
 		public static int VN_ARRAY_WIDTH = 4;  // same here..
 	};
-	double CHI = 0.7298; // constriction Factor
-	double PHI = 2.05; 
-	double[] posRanges = {15.0, 30.0};
-	double[] velRanges = {-2.0, 4.0};
+	public enum FinalSettings {;
+		public static double CHI = 0.7298; // constriction Factor
+		public static double PHI = 2.05; 
+		public static double[] posRanges = {15.0, 30.0};
+		public static double[] velRanges = {-2.0, 4.0};
+	}
+
 	//PARAMS DEF END
 	
 	
@@ -176,7 +179,8 @@ public class PSO {
 						particle.getEFactor(),
 						params.ACO_Params.getSatLimit(), 
 						params.ACO_Params.getTimeLimit(), 
-						params.ACO_Params.getOptDist())
+						params.ACO_Params.getOptDist(),
+						params.ACO_Params.getColors())
 				).get_res();
 		return res.getBestPath().getTourLen();
 	}
@@ -218,10 +222,10 @@ public class PSO {
 			}
 		}
 	}
+	
 
-	
-	
-	
+
+
 	// descriptions
 	public Result getResult() {
 		return new Result(gBest, iterationCount, params.getTopology());

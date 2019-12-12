@@ -48,7 +48,6 @@ public class Params {
 	}
 
 	
-	
 	public void print() {
 		System.out.print("ants-"+this.numOf_ants+ " iter-"+this.numOf_iterations+ " a-"+this.alpha+ " b-"+
 				this.beta+ "rho-"+this.rho+ " epsi-"+this.epsilon+" qo-"+this.q_0+" sat-"+this.satLimit+
@@ -58,6 +57,9 @@ public class Params {
 	/*
 	 * getters and Setters for parameters
 	 */
+	public void setGraph(Graph graph) {
+		this.graph = graph;
+	}
 	public int getNumOf_ants() {
 		return numOf_ants;
 	}

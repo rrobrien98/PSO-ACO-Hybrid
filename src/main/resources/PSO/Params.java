@@ -1,5 +1,6 @@
 package main.resources.PSO;
 import main.PSO.Topology;
+import main.resources.ACO.Graph;
 
 public class Params {
 	
@@ -22,7 +23,8 @@ public class Params {
 			double phi,
 			int swarmSize,
 			int maxIter,
-			int maxDim
+			int maxDim,
+			Graph graph
 		){
 		this.topology = topology;
 		this.posRange = posRange;
@@ -32,6 +34,7 @@ public class Params {
 		this.swarmSize = swarmSize;
 		this.maxIter = maxIter;
 		this.maxDim = maxDim;
+		this.ACO_Params.setGraph(graph);
 	}
 	
 	

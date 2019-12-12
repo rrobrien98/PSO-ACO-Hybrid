@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import main.Lab;
+import main.Lab.Error;
+
 public class Graph {
 	private int colors;
 	private Random rand = new Random();
@@ -51,8 +54,10 @@ public class Graph {
 			br.close();
 		} catch (FileNotFoundException e) {
 			System.out.print("Input File Not Found.");
+			Lab.throwError(Error.illegalArgs);
 		} catch (IOException e) {
 			System.out.print("IO error in br.readline()");
+			Lab.throwError(Error.illegalArgs);
 			e.printStackTrace();
 		}
 	}

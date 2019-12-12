@@ -203,7 +203,7 @@ public class ACO {
 		for(Node node: graph.getNodes()) for(Node ne: node.getNeighbors()) {
 			Leg leg = graph.getLeg(node, ne);
 			if(!updatedLegs.contains(leg)){
-				double[] pheromone = leg.getPheremoneArray();
+				double[] pheromone = leg.getPheromoneArray();
 				for (int i = 0; i < pheromone.length; i ++) {
 					pheromone[i] *= (1-this.params.getRho());
 				}
@@ -234,9 +234,11 @@ public class ACO {
 	 * the current best it sets the bestPath object to a clone of that ant.
 	 */
 	public void updateBest() {
-		for(Ant ant: colony) if(ant.getTourLen() > this.bestPath.getTourLen()) {
-			this.bestPath = ant.clone();
-		}
+		this.bestPath = this.graph.mergeAntTours(this.colony);
+
+//		for(Ant ant: colony) if(ant.getTourLen() > this.bestPath.getTourLen()) {
+//			this.bestPath = ant.clone();
+//		}
 	}
 
 	/*
