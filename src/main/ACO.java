@@ -93,9 +93,10 @@ public class ACO {
 	 * for each city. This allows the ants to build tours parallel to each other rather than one after the other.
 	 */
 	public void tour() {
-		int tour_len = 0;
 		//until the tour has had time to visit every city keep going
 		for(int graphDim = 0; graphDim<this.graph.getNumOf_legsDims(); graphDim++) {
+			System.out.print("D-"+graphDim);
+			int tour_len = 0;
 			while (tour_len < this.graph.getNumOf_edges()) {
 				//Moves each ant
 				for(Ant ant: colony) if (ant.cont()) this.selectNext(ant, graphDim);
@@ -104,8 +105,9 @@ public class ACO {
 			this.updatePheromone(graphDim);
 			// update best
 			Ant superAnt = this.graph.mergeAntTours(colony);
+			System.out.println(" -> "+superAnt.getTourLen());
+
 			if(superAnt.getTourLen() > this.bestPath.getTourLen()) {
-				System.out.println("Best to -> "+superAnt.getTourLen());
 				this.bestPath = superAnt.clone();
 			}
 			for(Ant ant: colony) ant.reset(graph.getRandNode()); // reset ants after touring dimension
@@ -133,6 +135,7 @@ public class ACO {
 	 * last probability as the next city.
 	 */
 	public void selectNext(Ant ant, int graphDim) {
+
 		//find all cities that haven't been visited.
 		ArrayList<Node> clearNodes = graph.getClearNodes(ant, graphDim);
 

@@ -52,20 +52,6 @@ public class Ant {
 
 	public boolean tourHasLeg(Leg leg) {
 		return this.tourLegs.contains(leg.getId());
-//		int next_index, prev_index;
-//		int index_i = this.tourNodes.indexOf(leg.getNodeA());
-//		if(index_i == 0) {
-//			next_index = 1;
-//			prev_index = this.tourNodes.size()-1;
-//		}else if(index_i == this.tourNodes.size()-1) {
-//			next_index = 0;
-//			prev_index = this.tourNodes.size()-2;
-//		}else {
-//			next_index = index_i+1;
-//			prev_index = index_i-1;
-//		}
-//		if (this.tourNodes.get(next_index).equals(leg.getNodeB()) || this.tourNodes.get(prev_index).equals(leg.getNodeB())) return true;
-//		return false;
 	}
 	
 
