@@ -22,6 +22,7 @@ public class Graph {
 	public Graph(String filename, int colors) {
 		this.filename = filename;
 		this.colors = colors;
+		this.constructGraph();
 	}
 	public void constructGraph() {
 		try {
@@ -44,8 +45,8 @@ public class Graph {
 					readNodes = true;
 				}
 				if(firstEdge) {
-					Node nodeA = this.nodes.get(Integer.parseInt(parts[0]));
-					Node nodeB = this.nodes.get(Integer.parseInt(parts[1]));
+					Node nodeA = this.nodes.get(Integer.parseInt(parts[0])-1);
+					Node nodeB = this.nodes.get(Integer.parseInt(parts[1])-1);
 					this.addLeg(nodeA, nodeB);
 					nodeA.addNeighbor(nodeB);
 					nodeB.addNeighbor(nodeA);

@@ -5,7 +5,7 @@ public class Lab {
 	public static void main(String[] args) {
 		
 		
-		String graphFileName = "inf-euroroad.edges";		
+		String graphFileName = "./src/inf-euroroad.edges";		
 
 		
 		// initialize PSO instance

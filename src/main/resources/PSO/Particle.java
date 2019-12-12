@@ -25,7 +25,7 @@ public class Particle {
 			coords[i] = rand.nextDouble() * (posMax - posMin) + posMin;
 			velocities[i] = rand.nextDouble() * (velMax - velMin) + velMin;
 		}
-		this.setPbest(null);
+		this.setPbest(coords);
 		this.setNhoodBest(null);
 		this.setVal(Double.MAX_VALUE);
 		this.setPbestval(Double.MAX_VALUE);
@@ -72,10 +72,10 @@ public class Particle {
 
 	
 	// getters for vector dims
-	public double getAlpha() {return 0;}
-	public double getBeta() {return 0;}
-	public double getRho() {return 0;}
-	public double getEFactor() {return 0;}
+	public double getAlpha() {return coords[0];}
+	public double getBeta() {return coords[1];}
+	public double getRho() {return coords[2];}
+	public double getEFactor() {return coords[3];}
 	
 	
 }
