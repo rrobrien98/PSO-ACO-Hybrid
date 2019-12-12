@@ -7,13 +7,13 @@ package main.resources.ACO;
  */
 public class Leg {
 	
-	private int id;
-	
-	private double[] pheromones;
-	
+	private int id;	
 	private int color;
 	private Node nodeA;
 	private Node nodeB;
+	
+	private double[] pheromones;
+	
 	
 	/*
 	 * constructor for a leg. Takes an initial amount of pheremone and a distance
@@ -29,12 +29,10 @@ public class Leg {
 	
 	
 	public Leg(Leg model) {
-		Leg leg = new Leg(0,null,null,0,0);
-		leg.id = model.id;
-		leg.color = model.color;
-		leg.pheromones = model.pheromones;
-		leg.nodeA = model.nodeA;
-		leg.nodeB = model.nodeB;
+		this.id = model.getId();
+		this.nodeA = model.getNodeA().clone();
+		this.nodeB = model.getNodeB().clone();
+		this.pheromones = model.getPheromoneArray().clone();
 	}
 	public Leg clone() { return new Leg(this);}
 	
@@ -43,6 +41,7 @@ public class Leg {
 		this.color = -1;
 	}
 	
+
 	public boolean hasNodes(Node nodeA, Node nodeB) {
 		if(this.nodeA.equals(nodeA) && this.nodeB.equals(nodeB) ||
 			this.nodeB.equals(nodeA) && this.nodeA.equals(nodeB)) {
@@ -66,8 +65,8 @@ public class Leg {
 	public void setPheromone(double pheromone, int color) {
 		this.pheromones[color] = pheromone;
 	}
-	public void resetPheromone(double startPheromone, int numOf_colors) {
-		for(int i=0; i<numOf_colors; i++) this.pheromones[i] = startPheromone;
+	public void setPheromones(double[] pheromones) {
+		this.pheromones = pheromones.clone();
 	}
 	public double [] getPheromoneArray() {
 		return this.pheromones;

@@ -124,6 +124,10 @@ public class Graph {
 			}
 			legsDims.set(i, legsMapCopy); // update other graph dims to dim[0]
 		}
+		
+		for(int key: this.getLegKeys(0)) {
+			System.out.println("????? "+legsDims.get(1).get(key).getColor());
+		}
 		return this.legsDims.get(0);
 	}
 

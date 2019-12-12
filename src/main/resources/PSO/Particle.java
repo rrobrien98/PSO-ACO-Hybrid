@@ -28,11 +28,11 @@ public class Particle {
 			coords[0] = rand.nextDouble() * (Lab.PosRanges.alpha[0] - Lab.PosRanges.alpha[1]) + Lab.PosRanges.alpha[0];
 			velocities[0] = rand.nextDouble() * (Lab.VelRanges.alpha[0] - Lab.VelRanges.alpha[1]) + Lab.VelRanges.alpha[0];
 			//rho
-			coords[1] = rand.nextDouble() * (Lab.PosRanges.rho[0] - Lab.PosRanges.rho[1]) + Lab.PosRanges.rho[0];
-			velocities[1] = rand.nextDouble() * (Lab.VelRanges.rho[0] - Lab.VelRanges.rho[1]) + Lab.VelRanges.rho[0];
+			coords[2] = rand.nextDouble() * (Lab.PosRanges.rho[0] - Lab.PosRanges.rho[1]) + Lab.PosRanges.rho[0];
+			velocities[2] = rand.nextDouble() * (Lab.VelRanges.rho[0] - Lab.VelRanges.rho[1]) + Lab.VelRanges.rho[0];
 			//eFactor
-			coords[2] = rand.nextDouble() * (Lab.PosRanges.eFactor[0] - Lab.PosRanges.eFactor[1]) + Lab.PosRanges.eFactor[0];
-			velocities[2] = rand.nextDouble() * (Lab.VelRanges.eFactor[0] - Lab.VelRanges.eFactor[1]) + Lab.VelRanges.eFactor[0];
+			coords[3] = rand.nextDouble() * (Lab.PosRanges.eFactor[0] - Lab.PosRanges.eFactor[1]) + Lab.PosRanges.eFactor[0];
+			velocities[3] = rand.nextDouble() * (Lab.VelRanges.eFactor[0] - Lab.VelRanges.eFactor[1]) + Lab.VelRanges.eFactor[0];
 		}
 		this.setPbest(coords);
 		this.setNhoodBest(null);

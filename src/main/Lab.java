@@ -3,15 +3,15 @@ package main;
 public class Lab {
 	
 	public static enum PosRanges {;
-		public static double[] alpha = {1,2};
-		public static double[] rho = {1,2};
-		public static double[] eFactor = {1,2};
+		public static double[] alpha = {0,4};
+		public static double[] rho = {0,1};
+		public static double[] eFactor = {0,100};
 	}
 	
 	public static enum VelRanges {;
-		public static double[] alpha = {1,2};
-		public static double[] rho = {1,2};
-		public static double[] eFactor = {1,2};	
+		public static double[] alpha = {-.3,.3};
+		public static double[] rho = {-.1,.1};
+		public static double[] eFactor = {-10,10};	
 	}
 
 	public static void main(String[] args) {
