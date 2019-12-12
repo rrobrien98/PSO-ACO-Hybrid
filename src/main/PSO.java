@@ -60,10 +60,7 @@ public class PSO {
 	// description
 	private void initParticles() {
 		for (int i = 0; i < params.getSwarmSize(); i++) {
-			particles.add(new Particle(
-					params.getPosRange()[0], params.getPosRange()[1], 
-					params.getVelRange()[0], params.getVelRange()[1], 
-					params.getMaxDim()));
+			particles.add(new Particle(params.getMaxDim()));
 		}
 		gBest = particles.get(0).clone(); // set random particle as best
 	}

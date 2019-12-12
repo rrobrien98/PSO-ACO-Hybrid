@@ -17,7 +17,7 @@ public class Particle {
 	private Random rand = new Random();
 	
 	
-	public Particle(double posMin, double posMax, double velMin, double velMax, int maxDim) {
+	public Particle(int maxDim) {
 		neighbors = new ArrayList<Particle>();
 		coords = new double[maxDim];
 		velocities = new double[maxDim];

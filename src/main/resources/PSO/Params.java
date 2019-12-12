@@ -1,6 +1,5 @@
 package main.resources.PSO;
 import main.ACO;
-import main.Lab;
 import main.PSO;
 import main.PSO.Topology;
 import main.resources.ACO.Graph;
@@ -8,12 +7,6 @@ import main.resources.ACO.Graph;
 public class Params {
 	
 	private Topology topology;
-	private double[] posRangeAlpha;
-	private double[] posRangeRho;
-	private double[] posRangeAlEFactor;
-	private double[] velRangeRho;
-	private double[] velRangeAlpha;
-	private double[] velRangeAlEFactor;
 	private double chi; // constriction Factor
 	private double phi;
 	private int swarmSize;
@@ -25,12 +18,6 @@ public class Params {
 
 	public Params(String graphFileName){
 		this.topology = PSO.Topology.ra;
-		public double posRangeAlpha = Lab.PosRanges.alpha;
-		public double velRangeAlpha;
-		public double posRangeRho;
-		public double velRangeRho;
-		public double posRangeAlEFactor;
-		public double velRangeAlEFactor;
 		this.chi = PSO.FinalSettings.CHI;
 		this.phi = PSO.FinalSettings.PHI;
 		this.swarmSize = PSO.FinalSettings.swarmSize;
@@ -63,8 +50,6 @@ public class Params {
 	
 	//getters
 	public Topology getTopology() {return topology;}
-	public double[] getPosRange() {return posRange;}
-	public double[] getVelRange() {return velRange;}
 	public double getChi() {return chi;}
 	public double getPhi() {return phi;}
 	public int getSwarmSize() {return swarmSize;}
