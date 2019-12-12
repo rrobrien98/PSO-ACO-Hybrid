@@ -7,10 +7,9 @@ package main.resources.ACO;
  */
 public class Leg {
 	
-
+	private int id;
 	
-	private double[] pheromone;
-	private double dist;
+	private double[] pheromones;
 	
 	private int color;
 	private Node nodeA;
@@ -19,11 +18,13 @@ public class Leg {
 	/*
 	 * constructor for a leg. Takes an initial amount of pheremone and a distance
 	 */
-	public Leg(double pheromone, Node nodeA ,Node nodeB, int colors) {
-		this.pheromone = new double[colors];
+	public Leg(double startPheromone, Node nodeA ,Node nodeB, int numOf_colors, int id) {
+		this.pheromones = new double[numOf_colors];
+		for(int i=0; i<numOf_colors; i++) this.pheromones[i] = startPheromone; 
 		this.color = -1;
 		this.nodeA = nodeA;
 		this.nodeB = nodeB;
+		this.id = id;
 	}
 	
 	public boolean hasNodes(Node nodeA, Node nodeB) {
@@ -33,25 +34,26 @@ public class Leg {
 		}
 		return false;
 	}
+	
+	public void mergePheromones(Leg leg) {
+		for(int i=0; i<pheromones.length; i++) {
+			this.pheromones[i] += leg.getPheremone(i);
+		}
+	}
 
 	/*
 	 * Getters and setters for leg variables.
 	 */
 	public double getPheremone(int color) {
-		return pheromone[color];
+		return pheromones[color];
 	}
 	public void setPheremone(double pheremone, int color) {
-		this.pheromone[color] = pheremone;
+		this.pheromones[color] = pheremone;
 	}
 	public double [] getPheromoneArray() {
-		return this.pheromone;
+		return this.pheromones;
 	}
-	public double getDist() {
-		return dist;
-	}
-	public void setDist(double dist) {
-		this.dist = dist;
-	}
+
 	public int getColor(){
 		return this.color;
 	}
@@ -59,14 +61,17 @@ public class Leg {
 		this.color = color;
 	}
 	
+	public int getKey() {return id;}
+	public int getId() {return id;}
+	
 	public Node getNodeA() {return nodeA;}
 	public Node getNodeB() {return nodeB;}
 
 	public double getTotalPheremone() {
 		// TODO Auto-generated method stub
 		double total = 0;
-		for (int i = 0; i < this.pheromone.length; i++) {
-			total += this.pheromone[i];
+		for (int i = 0; i < this.pheromones.length; i++) {
+			total += this.pheromones[i];
 		}
 		return total;
 	}

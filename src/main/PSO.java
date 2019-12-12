@@ -19,7 +19,7 @@ public class PSO {
 		public static double[] posRanges = {15.0, 30.0};
 		public static double[] velRanges = {-2.0, 4.0};
 		public static int swarmSize = 5;
-		public static int maxIter = 5;
+		public static int maxIter = Integer.MAX_VALUE;
 		public static int maxDim = 5;
 	}
 	//PARAMS DEF END
@@ -208,7 +208,7 @@ public class PSO {
 			Particle currParticle = particles.get(i);
 			if (currParticle.getCurrVal() > gBest.getCurrVal()) {
 				gBest = currParticle.clone();
-				if(gBest.getCurrVal() == 0.0) bestFound = true;
+				if(gBest.getCurrVal() >= params.ACO_Params.getGraph().getNumOf_edges()) bestFound = true;
 			}
 		}
 	}

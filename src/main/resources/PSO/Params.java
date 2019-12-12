@@ -35,7 +35,7 @@ public class Params {
 	
 	// construct initial ACO params
 	private void initACO(String graphFileName){
-		Graph graph = new Graph(graphFileName, ACO.FinalSettings.numOf_colors);
+		Graph graph = new Graph(graphFileName, ACO.FinalSettings.graphDims, ACO.FinalSettings.numOf_colors);
 		ACO_Params = new main.resources.ACO.Params(
 				graph,
 				ACO.FinalSettings.numOf_ants,

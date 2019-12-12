@@ -23,10 +23,11 @@ public class ACO {
 		public static double beta = 2.05; 
 		public static double rho = 15.0;
 		public static double eFactor = 4.0;
-		public static double satLimit = 5;
+		public static double satLimit = Double.MAX_VALUE;
 		public static long timeLimit = Long.MAX_VALUE;
 		public static double optDist = Double.MAX_VALUE;
 		public static int numOf_colors = 5;
+		public static int graphDims = 3;
 	}
 	//PARAMS DEF END
 
@@ -79,12 +80,9 @@ public class ACO {
 		startTime = System.currentTimeMillis();
 		duration = 0;
 		while(	iterCount < params.getNumOf_iterations() && 
-				bestPath.getTourLen() > params.getSatLimit() &&
+				bestPath.getTourLen() < params.getSatLimit() &&
 				duration < params.getTimeLimit()){
 			this.tour();
-			this.updateBest();
-			this.updatePheromone();
-			this.resetAnts();
 			iterCount++;//update iterations
 			duration = System.currentTimeMillis() - startTime;//update duration
 		}
@@ -96,16 +94,22 @@ public class ACO {
 	 */
 	public void tour() {
 		int tour_len = 0;
-		//until the tour has had time to visit every city keep going		
-		while (tour_len < this.graph.getNumOf_nodes()) {
-			//Moves each ant
-			for(Ant ant: colony) {
-				if (ant.cont()) {
-					this.selectNext(ant);
+		//until the tour has had time to visit every city keep going
+		for(int graphDim = 0; graphDim<this.graph.getNumOf_legsDims(); graphDim++) {
+			for(Ant ant: colony) ant.reset(graph.getRandNode()); // reset ants before touring dimension
+			while (tour_len < this.graph.getNumOf_edges()) {
+				//Moves each ant
+				for(Ant ant: colony) {
+					if (ant.cont()) {
+						this.selectNext(ant, graphDim);
+					}
 				}
+				tour_len++;
 			}
-			tour_len++;
+			this.updatePheromone(graphDim);
 		}
+		this.graph.mergeDims(); // merge (pheromone) dims into one graph by adding pheromone values
+		this.bestPath = this.graph.mergeAntTours(colony); // update best
 	}
 	
 
@@ -126,16 +130,16 @@ public class ACO {
 	 * until the total probability goes below zero. It then takes the city corresponding to the
 	 * last probability as the next city.
 	 */
-	public void selectNext(Ant ant) {
+	public void selectNext(Ant ant, int graphDim) {
 		//find all cities that haven't been visited.
-		ArrayList<Node> clearNodes = graph.getClearNodes(ant);
+		ArrayList<Node> clearNodes = graph.getClearNodes(ant, graphDim);
 
 		ArrayList<Double> probs = new ArrayList<Double>();
 		double total_prob = 0;
 		//calculate all probabilities and add to total probability.
 		for (Node clearNode : clearNodes) {
-			Leg leg = graph.getLeg(ant.getCurrNode(), clearNode);
-			double leg_prob = Math.pow(leg.getTotalPheremone(), this.params.getAlpha()) * Math.pow((1/leg.getDist()), this.params.getBeta());
+			Leg leg = graph.getLeg(ant.getCurrNode(), clearNode, graphDim);
+			double leg_prob = Math.pow(leg.getTotalPheremone(), this.params.getAlpha());
 			total_prob += leg_prob;
 			probs.add(leg_prob);
 		}
@@ -150,25 +154,25 @@ public class ACO {
 		Node nextNode = clearNodes.get(index);
 		
 		int color;
-		if ((color = this.colorPath(ant, nextNode)) != -1) {
+		if ((color = this.colorPath(ant, nextNode, graphDim)) != -1) {
 			ant.moveToNode(nextNode,color);
 		}
 		else {
-			//stop the ants tour
+			ant.stop();
 		}
 			
 	}
-	private int colorPath(Ant ant, Node nextNode) {
+	private int colorPath(Ant ant, Node nextNode, int graphDim) {
 		// TODO method that loops through all colors that we could color this next leg, probabilistically selects one
 		ArrayList<Integer> used_colors = new ArrayList<Integer>();
 		for (Node neighbor : ant.getCurrNode().getNeighbors()) {
-			Leg leg = this.graph.getLeg(ant.getCurrNode(), neighbor);
+			Leg leg = this.graph.getLeg(ant.getCurrNode(), neighbor, graphDim);
 			if (leg.getColor() != -1) {
 				used_colors.add(leg.getColor());
 			}
 		}
 		for (Node neighbor : nextNode.getNeighbors()) {
-			Leg leg = this.graph.getLeg(nextNode, neighbor);
+			Leg leg = this.graph.getLeg(nextNode, neighbor, graphDim);
 			if (leg.getColor() != -1) {
 				used_colors.add(leg.getColor());
 			}
@@ -176,7 +180,7 @@ public class ACO {
 		ArrayList<Double> probs = new ArrayList<Double>();
 		ArrayList<Integer> colors = new ArrayList<Integer>();
 		double total_prob = 0;
-		Leg leg = graph.getLeg(ant.getCurrNode(), nextNode);
+		Leg leg = graph.getLeg(ant.getCurrNode(), nextNode, graphDim);
 		//calculate all probabilities and add to total probability.
 		for (int i = 0; i < this.params.getColors();i++) {
 			if (!used_colors.contains(i)) {
@@ -214,17 +218,16 @@ public class ACO {
 	 * If the best path did travel the leg it adds the elitist pheremone to the leg.
 	 * Then updates both directions of the leg to the new pheremone level.
 	 */
-	public void updatePheromone() {
+	public void updatePheromone(int graphDim) {
 		//iterate through every city. Have to do this via the nodes because legs is a hashtable, not iteratable
 		ArrayList<Leg> updatedLegs = new ArrayList<Leg>();
 		for(Node node: graph.getNodes()) for(Node ne: node.getNeighbors()) {
-			Leg leg = graph.getLeg(node, ne);
+			Leg leg = graph.getLeg(node, ne, graphDim);
 			if(!updatedLegs.contains(leg)){
 				double[] pheromone = leg.getPheromoneArray();
 				for (int i = 0; i < pheromone.length; i ++) {
 					pheromone[i] *= (1-this.params.getRho());
 				}
-				
 				//add pheromone for every ant that traveled the leg
 				for(Ant ant: colony) {
 					if(ant.tourHasLeg(leg)) {
@@ -232,31 +235,19 @@ public class ACO {
 					}
 				}
 				//if the best path travels the leg add pheremone.
-				
 				this.graph.setPheromone(leg, pheromone);//set the leg to the new pheromone.
 				updatedLegs.add(leg);
 			}
 		}
+		
+		
 	}
 
 	
-
 	
 	
 //	=============== Other functions ===============
-	
-	
-	/*
-	 * Updates the best found path so far. If an ant has found a better path than
-	 * the current best it sets the bestPath object to a clone of that ant.
-	 */
-	public void updateBest() {
-		this.bestPath = this.graph.mergeAntTours(this.colony);
 
-//		for(Ant ant: colony) if(ant.getTourLen() > this.bestPath.getTourLen()) {
-//			this.bestPath = ant.clone();
-//		}
-	}
 
 	/*
 	 * Resets the ants tour arrays and puts them at a random city.

@@ -40,7 +40,7 @@ public class Params {
 		this.elitism_factor = num_ants;
 		this.type = Type.eac;
 		this.satLimit = satLimit;
-		this.timeLimit = timeLimit * 1000;
+		this.timeLimit = timeLimit;
 		this.optDist = optDist;
 		this.colors = colors;
 		this.graph = graph;
