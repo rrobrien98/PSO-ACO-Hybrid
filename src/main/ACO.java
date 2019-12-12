@@ -107,9 +107,12 @@ public class ACO {
 				tour_len++;
 			}
 			this.updatePheromone(graphDim);
+			// update best
+			Ant superAnt = this.graph.mergeAntTours(colony); 
+			if(superAnt.getTourLen() > this.bestPath.getTourLen()) this.bestPath = superAnt.clone();
 		}
 		this.graph.mergeDims(); // merge (pheromone) dims into one graph by adding pheromone values
-		this.bestPath = this.graph.mergeAntTours(colony); // update best
+		
 	}
 	
 
