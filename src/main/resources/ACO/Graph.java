@@ -52,13 +52,12 @@ public class Graph {
 				if(firstEdge) {
 					Node nodeA = this.nodes.get(Integer.parseInt(parts[0])-1);
 					Node nodeB = this.nodes.get(Integer.parseInt(parts[1])-1);
-					this.addLeg(nodeA, nodeB, 0); // initialize on dim 0 only, then duplicate to others
 					nodeA.addNeighbor(nodeB);
 					nodeB.addNeighbor(nodeA);
+					this.addLeg(nodeA, nodeB); // add copies of leg to all dims
 				}
 			}
 			br.close();
-			for(int i=1; i<legsDims.size(); i++) legsDims.set(i, legsDims.get(0));//duplicate legsDim[0] through other dims
 		} catch (FileNotFoundException e) {
 			System.out.print("Input File Not Found.");
 			Lab.throwError(Error.illegalArgs);
@@ -98,6 +97,15 @@ public class Graph {
 	}
 	
 	
+	// remove colors from all legs
+	public void clearColors() {
+		for(int i=1; i<this.numOf_legsDims; i++) {
+			for(int key: this.getLegKeys(0)) {
+				legsDims.get(i).get(key).clearColor();
+			}
+		}
+	}
+	
 	
 	
 	// returns graph from merged of previous iteration
@@ -108,7 +116,14 @@ public class Graph {
 				legsDims.get(0).get(key).mergePheromones(leg); // add pheromones from other dims to dim[0]
 			}
 		}
-		for(int i=1; i<this.numOf_legsDims; i++) legsDims.set(i, legsDims.get(0)); // update other graph dims to dim[0]
+		// clone legs, then clone hasmap => new hashmap copy for higher dims
+		for(int i=1; i<this.numOf_legsDims; i++) {
+			HashMap<Integer, Leg> legsMapCopy = new HashMap<Integer, Leg>();
+			for(int key: this.getLegKeys(0)) {
+				legsMapCopy.put(key,legsDims.get(0).get(key).clone());	
+			}
+			legsDims.set(i, legsMapCopy); // update other graph dims to dim[0]
+		}
 		return this.legsDims.get(0);
 	}
 
@@ -117,19 +132,25 @@ public class Graph {
 	// note: tours are combined from low index to high index, assuming that inputs has ants arranged
 	// 			so that last node from ant[i] is adjacent to first node from ant[i+1]
 	public Ant mergeAntTours(ArrayList<Ant> colony) {
-		ArrayList<Node> tour = new ArrayList<Node>();
-		for(Ant ant: colony) tour.addAll(ant.getTour());
-		Ant superAnt = new Ant(tour);
+		ArrayList<Node> tourNodes = new ArrayList<Node>();
+		ArrayList<Integer> tourLegs = new ArrayList<Integer>();
+		for(Ant ant: colony) {
+			tourNodes.addAll(ant.getTourNodes());
+			tourLegs.addAll(ant.getTourLegs());
+		}
+		Ant superAnt = new Ant(tourNodes, tourLegs);
 		return superAnt;
 	}
 	
 	
-	// add new leg to leg collection. make sure that direction is impotent
-	public void addLeg(Node nodeA, Node nodeB, int graphDim) {
-		int key = Integer.parseInt((""+nodeA.getId()) + (""+nodeB.getId()));
-		Leg leg = legsDims.get(graphDim).get(key);
-		if(leg != null) return;
-		legsDims.get(graphDim).put(key, new Leg(1/this.getNumOf_edges(), nodeA, nodeB,this.colors,key));
+	// add new leg to leg collections. order of params does not matter
+	public void addLeg(Node nodeA, Node nodeB) {
+		for(int i=0; i<this.numOf_legsDims; i++) {
+			int key = Integer.parseInt((""+nodeA.getId()) + (""+nodeB.getId()));
+			Leg leg = legsDims.get(i).get(key);
+			if(leg != null) return;
+			legsDims.get(i).put(key, new Leg(1/this.getNumOf_edges(), nodeA, nodeB,this.colors,key));
+		}
 	}
 	
 	
@@ -141,6 +162,9 @@ public class Graph {
 		Leg leg = legsDims.get(graphDim).get(key1);
 		if(leg == null) leg = legsDims.get(graphDim).get(key2);
 		return leg;
+	}
+	public Leg getLeg(int key, int graphDim) {
+		return legsDims.get(graphDim).get(key);
 	}
 	
 	

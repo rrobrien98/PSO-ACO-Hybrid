@@ -27,6 +27,22 @@ public class Leg {
 		this.id = id;
 	}
 	
+	
+	public Leg(Leg model) {
+		Leg leg = new Leg(0,null,null,0,0);
+		leg.id = model.id;
+		leg.color = model.color;
+		leg.pheromones = model.pheromones;
+		leg.nodeA = model.nodeA;
+		leg.nodeB = model.nodeB;
+	}
+	public Leg clone() { return new Leg(this);}
+	
+	
+	public void clearColor() {
+		this.color = -1;
+	}
+	
 	public boolean hasNodes(Node nodeA, Node nodeB) {
 		if(this.nodeA.equals(nodeA) && this.nodeB.equals(nodeB) ||
 			this.nodeB.equals(nodeA) && this.nodeA.equals(nodeB)) {
@@ -37,14 +53,14 @@ public class Leg {
 	
 	public void mergePheromones(Leg leg) {
 		for(int i=0; i<pheromones.length; i++) {
-			this.pheromones[i] += leg.getPheremone(i);
+			this.pheromones[i] += leg.getPheromone(i);
 		}
 	}
 
 	/*
 	 * Getters and setters for leg variables.
 	 */
-	public double getPheremone(int color) {
+	public double getPheromone(int color) {
 		return pheromones[color];
 	}
 	public void setPheremone(double pheremone, int color) {

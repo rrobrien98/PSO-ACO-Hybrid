@@ -96,23 +96,22 @@ public class ACO {
 		int tour_len = 0;
 		//until the tour has had time to visit every city keep going
 		for(int graphDim = 0; graphDim<this.graph.getNumOf_legsDims(); graphDim++) {
-			for(Ant ant: colony) ant.reset(graph.getRandNode()); // reset ants before touring dimension
 			while (tour_len < this.graph.getNumOf_edges()) {
 				//Moves each ant
-				for(Ant ant: colony) {
-					if (ant.cont()) {
-						this.selectNext(ant, graphDim);
-					}
-				}
+				for(Ant ant: colony) if (ant.cont()) this.selectNext(ant, graphDim);
 				tour_len++;
 			}
 			this.updatePheromone(graphDim);
 			// update best
-			Ant superAnt = this.graph.mergeAntTours(colony); 
-			if(superAnt.getTourLen() > this.bestPath.getTourLen()) this.bestPath = superAnt.clone();
+			Ant superAnt = this.graph.mergeAntTours(colony);
+			if(superAnt.getTourLen() > this.bestPath.getTourLen()) {
+				System.out.println("Best to -> "+superAnt.getTourLen());
+				this.bestPath = superAnt.clone();
+			}
+			for(Ant ant: colony) ant.reset(graph.getRandNode()); // reset ants after touring dimension
 		}
 		this.graph.mergeDims(); // merge (pheromone) dims into one graph by adding pheromone values
-		
+		this.graph.clearColors();
 	}
 	
 
@@ -146,39 +145,38 @@ public class ACO {
 			total_prob += leg_prob;
 			probs.add(leg_prob);
 		}
-		//use a random percent of total probability to set next city index.
-		int index = -1;//city number
-		total_prob *= rand.nextDouble();//random percent of total prob.
-		while (total_prob >= 0) {
-			index += 1;//next city
-			total_prob -= probs.get(index);//subtract city prob from total prob.
-		}
-		//move the ant to the next city.
-		Node nextNode = clearNodes.get(index);
-		
-		int color;
-		if ((color = this.colorPath(ant, nextNode, graphDim)) != -1) {
-			ant.moveToNode(nextNode,color);
-		}
+		if(total_prob == 0) ant.stop();
 		else {
-			ant.stop();
+			//use a random percent of total probability to set next node index.
+			int index = -1;//city number
+			total_prob *= rand.nextDouble();//random percent of total prob.
+			while (total_prob >= 0) {
+				index += 1;//next city
+				total_prob -= probs.get(index);//subtract node prob from total prob.
+			}
+			//move the ant to the next node.
+			Node nextNode = clearNodes.get(index);
+			int color = colorPath(ant, nextNode, graphDim);
+			if(color != -1) {
+				int legId = graph.getLeg(ant.getCurrNode(), nextNode, graphDim).getId();
+				ant.moveToNode(nextNode, legId, color);
+				graph.getLeg(legId, graphDim).setColor(color);
+			}
+			else ant.stop();
 		}
-			
 	}
+	
 	private int colorPath(Ant ant, Node nextNode, int graphDim) {
 		// TODO method that loops through all colors that we could color this next leg, probabilistically selects one
 		ArrayList<Integer> used_colors = new ArrayList<Integer>();
+		
 		for (Node neighbor : ant.getCurrNode().getNeighbors()) {
 			Leg leg = this.graph.getLeg(ant.getCurrNode(), neighbor, graphDim);
-			if (leg.getColor() != -1) {
-				used_colors.add(leg.getColor());
-			}
+			if (leg.getColor() != -1) used_colors.add(leg.getColor());
 		}
 		for (Node neighbor : nextNode.getNeighbors()) {
 			Leg leg = this.graph.getLeg(nextNode, neighbor, graphDim);
-			if (leg.getColor() != -1) {
-				used_colors.add(leg.getColor());
-			}
+			if (leg.getColor() != -1) used_colors.add(leg.getColor());
 		}
 		ArrayList<Double> probs = new ArrayList<Double>();
 		ArrayList<Integer> colors = new ArrayList<Integer>();
@@ -187,19 +185,19 @@ public class ACO {
 		//calculate all probabilities and add to total probability.
 		for (int i = 0; i < this.params.getColors();i++) {
 			if (!used_colors.contains(i)) {
-				double color_prob = leg.getPheremone(i);//assuming an array of phereomones
+				double color_prob = leg.getPheromone(i);//assuming an array of pheromones
 				probs.add(color_prob);
 				total_prob += color_prob;
 				colors.add(i);
 			}
 		}
-	//use a random percent of total probability to set next city index.
+	//use a random percent of total probability to set next node index.
 		if (!colors.isEmpty()) {
 			int index = -1;//color number
 			total_prob *= rand.nextDouble();//random percent of total prob.
 			while (total_prob >= 0) {
 				index += 1;//next city
-				total_prob -= probs.get(index);//subtract city prob from total prob.
+				total_prob -= probs.get(index);//subtract node prob from total prob.
 			}
 			return colors.get(index);
 		}
@@ -223,27 +221,21 @@ public class ACO {
 	 */
 	public void updatePheromone(int graphDim) {
 		//iterate through every city. Have to do this via the nodes because legs is a hashtable, not iteratable
-		ArrayList<Leg> updatedLegs = new ArrayList<Leg>();
-		for(Node node: graph.getNodes()) for(Node ne: node.getNeighbors()) {
-			Leg leg = graph.getLeg(node, ne, graphDim);
-			if(!updatedLegs.contains(leg)){
-				double[] pheromone = leg.getPheromoneArray();
-				for (int i = 0; i < pheromone.length; i ++) {
-					pheromone[i] *= (1-this.params.getRho());
-				}
-				//add pheromone for every ant that traveled the leg
-				for(Ant ant: colony) {
-					if(ant.tourHasLeg(leg)) {
-						pheromone[leg.getColor()] += this.params.getElitism_factor()*ant.getTourLen(); // (1/ant.getDist)
-					}
-				}
-				//if the best path travels the leg add pheremone.
-				this.graph.setPheromone(leg, pheromone);//set the leg to the new pheromone.
-				updatedLegs.add(leg);
+		for(int key: graph.getLegKeys(graphDim)) {
+			Leg leg = graph.getLeg(key, graphDim);
+			double[] pheromone = leg.getPheromoneArray();
+			for (int i = 0; i < pheromone.length; i ++) {
+				pheromone[i] *= (1-this.params.getRho());
 			}
-		}
-		
-		
+			//add pheromone for every ant that traveled the leg
+			for(Ant ant: colony) {
+				if(ant.tourHasLeg(leg)) {
+					pheromone[leg.getColor()] += this.params.getElitism_factor()*ant.getTourLen(); // (1/ant.getDist)
+				}
+			}
+			//if the best path travels the leg add pheremone.
+			this.graph.setPheromone(leg, pheromone);//set the leg to the new pheromone.
+		}	
 	}
 
 	

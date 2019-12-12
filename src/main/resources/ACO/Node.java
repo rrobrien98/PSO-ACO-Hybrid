@@ -11,6 +11,14 @@ public class Node {
 		this.id = id;
 	}
 	
+	public Node(Node model) {
+		this.id = model.id;
+		this.neighbors = model.neighbors;
+	}
+	public Node clone() {
+		return new Node(this);
+	}
+	
 	public boolean equals(Node node) {
 		return this.id == node.getId(); // <=== edit
 	}
@@ -19,7 +27,6 @@ public class Node {
 	public void addNeighbor(Node node) {
 		neighbors.add(node);
 	}
-	
 	
 	
 	// getters and setters

@@ -45,7 +45,7 @@ public class PSO {
 	private void runPSO() {
 		initParticles();
 		setNeighbors();
-		System.out.print("Progress: "); //UI
+		//System.out.print("Progress: "); //UI
 		while(iterationCount < params.getMaxIter() && !bestFound) {
 			_progressReport(); //UI
 			evalParticles();
