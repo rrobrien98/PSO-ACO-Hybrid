@@ -19,14 +19,14 @@ public class ACO {
 	public enum FinalSettings {;
 		public static int numOf_ants = 10;
 		public static int numOf_iter = 10;
-		public static double alpha = 0.7298; // constriction Factor
-		public static double beta = 2.05; 
-		public static double rho = 15.0;
-		public static double eFactor = 4.0;
+		public static double alpha = 1; // constriction Factor
+		public static double beta = 2; 
+		public static double rho = 0.1;
+		public static double eFactor = 20;
 		public static double satLimit = Double.MAX_VALUE;
 		public static long timeLimit = Long.MAX_VALUE;
 		public static double optDist = Double.MAX_VALUE;
-		public static int numOf_colors = 5;
+		public static int numOf_colors = 10;
 		public static int graphDims = 3;
 	}
 	//PARAMS DEF END
@@ -95,25 +95,25 @@ public class ACO {
 	public void tour() {
 		//until the tour has had time to visit every city keep going
 		for(int graphDim = 0; graphDim<this.graph.getNumOf_legsDims(); graphDim++) {
-			System.out.print("D-"+graphDim);
 			int tour_len = 0;
 			while (tour_len < this.graph.getNumOf_edges()) {
 				//Moves each ant
-				for(Ant ant: colony) if (ant.cont()) this.selectNext(ant, graphDim);
+				for(Ant ant: colony) {
+					if (ant.cont()) this.selectNext(ant, graphDim);
+				}
 				tour_len++;
 			}
 			this.updatePheromone(graphDim);
 			// update best
 			Ant superAnt = this.graph.mergeAntTours(colony);
-			System.out.println(" -> "+superAnt.getTourLen());
-
 			if(superAnt.getTourLen() > this.bestPath.getTourLen()) {
 				this.bestPath = superAnt.clone();
+				System.out.println(superAnt.getTourLen());
 			}
 			for(Ant ant: colony) ant.reset(graph.getRandNode()); // reset ants after touring dimension
 		}
 		this.graph.mergeDims(); // merge (pheromone) dims into one graph by adding pheromone values
-		this.graph.clearColors();
+		this.graph.clearColors();	
 	}
 	
 

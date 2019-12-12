@@ -16,8 +16,6 @@ public class PSO {
 	public enum FinalSettings {;
 		public static double CHI = 0.7298; // constriction Factor
 		public static double PHI = 2.05; 
-		public static double[] posRanges = {15.0, 30.0};
-		public static double[] velRanges = {-2.0, 4.0};
 		public static int swarmSize = 5;
 		public static int maxIter = Integer.MAX_VALUE;
 		public static int maxDim = 5;

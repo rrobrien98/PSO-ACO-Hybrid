@@ -1,12 +1,24 @@
 package main;
 
 public class Lab {
+	
+	public static enum PosRanges {;
+		public static double[] alpha = {1,2};
+		public static double[] rho = {1,2};
+		public static double[] eFactor = {1,2};
+	}
+	
+	public static enum VelRanges {;
+		public static double[] alpha = {1,2};
+		public static double[] rho = {1,2};
+		public static double[] eFactor = {1,2};	
+	}
 
 	public static void main(String[] args) {
 		
 		
 		String graphFileName = "./src/inf-euroroad.edges";		
-
+		
 		
 		// initialize PSO instance
 		System.out.println("Initializing Project ...");

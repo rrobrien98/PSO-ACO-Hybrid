@@ -63,8 +63,11 @@ public class Leg {
 	public double getPheromone(int color) {
 		return pheromones[color];
 	}
-	public void setPheremone(double pheremone, int color) {
-		this.pheromones[color] = pheremone;
+	public void setPheromone(double pheromone, int color) {
+		this.pheromones[color] = pheromone;
+	}
+	public void resetPheromone(double startPheromone, int numOf_colors) {
+		for(int i=0; i<numOf_colors; i++) this.pheromones[i] = startPheromone;
 	}
 	public double [] getPheromoneArray() {
 		return this.pheromones;

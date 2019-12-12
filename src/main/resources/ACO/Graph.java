@@ -99,7 +99,7 @@ public class Graph {
 	
 	// remove colors from all legs
 	public void clearColors() {
-		for(int i=1; i<this.numOf_legsDims; i++) {
+		for(int i=0; i<this.numOf_legsDims; i++) {
 			for(int key: this.getLegKeys(0)) {
 				legsDims.get(i).get(key).clearColor();
 			}
@@ -186,7 +186,7 @@ public class Graph {
 	// set pheromone to leg
 	public void setPheromone(Leg leg, double[] pheromone) {
 		for (int i = 0; i < pheromone.length;i++) {
-			leg.setPheremone(pheromone[i], i);
+			leg.setPheromone(pheromone[i], i);
 		}
 	}
 	
