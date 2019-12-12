@@ -14,6 +14,23 @@ import main.resources.ACO.Node;
  */
 public class ACO {
 	public enum Type {eac, acs};
+	
+	//PARAMS DEF START
+	public enum FinalSettings {;
+		public static int numOf_ants = 10;
+		public static int numOf_iter = 10;
+		public static double alpha = 0.7298; // constriction Factor
+		public static double beta = 2.05; 
+		public static double rho = 15.0;
+		public static double eFactor = 4.0;
+		public static double satLimit = 5;
+		public static long timeLimit = Long.MAX_VALUE;
+		public static double optDist = Double.MAX_VALUE;
+		public static int numOf_colors = 5;
+	}
+	//PARAMS DEF END
+
+
 	Random rand;
 	Params params;
 	Graph graph;
@@ -28,10 +45,10 @@ public class ACO {
 	 * Stores necessary variables and objects, intitializes the colony of ants, 
 	 * initializes a running time, and then calls runACO to actually run the algorithm.
 	 */
-	public ACO(Graph graph, Params params) {
+	public ACO(Params params) {
 		this.params = params;
 		this.rand = new Random();
-		this.graph = graph;
+		this.graph = params.getGraph();
 		this.iterCount = 0;
 		this.colony = new ArrayList<Ant>();
 		this.initialize_colony();

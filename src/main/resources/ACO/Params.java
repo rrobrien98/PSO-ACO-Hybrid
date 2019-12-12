@@ -14,7 +14,6 @@ public class Params {
 	private double optDist;
 	public Type type;
 	private int colors;
-	String optFile;
 	private int numOf_ants;
 	private int numOf_iterations;
 	//parameters for calculations
@@ -31,9 +30,8 @@ public class Params {
 	/*
 	 * Initialize parameters object for the Elitist Ant Colony type of ACO
 	 */
-	public Params(String optFile, int num_ants, int num_iterations, double alpha,
+	public Params(Graph graph, int num_ants, int num_iterations, double alpha,
 			double beta, double rho, double eFactor, double satLimit, long timeLimit, double optDist, int colors) {
-		this.optFile = optFile;
 		this.numOf_ants = num_ants;
 		this.numOf_iterations = num_iterations;
 		this.alpha = alpha;
@@ -45,6 +43,7 @@ public class Params {
 		this.timeLimit = timeLimit * 1000;
 		this.optDist = optDist;
 		this.colors = colors;
+		this.graph = graph;
 	}
 
 	
@@ -93,9 +92,6 @@ public class Params {
 	}
 	public Type getType() {
 		return this.type;
-	}
-	public String getOptFile() {
-		return optFile;
 	}
 	public long getTimeLimit() {
 		return timeLimit;

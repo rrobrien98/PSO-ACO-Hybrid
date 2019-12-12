@@ -22,7 +22,6 @@ public class PSO {
 		public static int maxIter = 5;
 		public static int maxDim = 5;
 	}
-
 	//PARAMS DEF END
 	
 	
@@ -171,9 +170,8 @@ public class PSO {
 	// description
 	private int evalACO(Particle particle) {
 		ACO.Result res = new ACO(
-				params.ACO_Params.getGraph(),
 				new main.resources.ACO.Params(
-						params.ACO_Params.getOptFile(), 
+						params.ACO_Params.getGraph(),
 						params.ACO_Params.getNumOf_ants(), 
 						params.ACO_Params.getNumOf_iterations(), 
 						particle.getAlpha(),

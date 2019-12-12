@@ -1,23 +1,18 @@
 package main;
-import main.resources.ACO.Graph;
 import main.resources.PSO.Params;
 
 public class Lab {
 
 	public static void main(String[] args) {
 		
-		// graph settings
-		String graphFileName = "";
-		int numOf_colors = 10;
 		
-		
-		// graph parsing
-		Graph graph = new Graph(graphFileName, numOf_colors);
-		
+		String graphFileName = "inf-euroroad.edges";		
+
 		
 		// initialize PSO instance
-		System.out.println("Initializing PSO ...");
+		System.out.println("Initializing Project ...");
 		main.resources.PSO.Params psoParams = new Params(
+				graphFileName,
 				PSO.Topology.ra,
 				PSO.FinalSettings.posRanges,
 				PSO.FinalSettings.velRanges,
@@ -25,8 +20,7 @@ public class Lab {
 				PSO.FinalSettings.PHI,
 				PSO.FinalSettings.swarmSize,
 				PSO.FinalSettings.maxIter,
-				PSO.FinalSettings.maxDim,
-				graph
+				PSO.FinalSettings.maxDim
 		);
 		PSO pso = new PSO(psoParams);
 		
