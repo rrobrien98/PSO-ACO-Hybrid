@@ -18,6 +18,9 @@ public class PSO {
 		public static double PHI = 2.05; 
 		public static double[] posRanges = {15.0, 30.0};
 		public static double[] velRanges = {-2.0, 4.0};
+		public static int swarmSize = 5;
+		public static int maxIter = 5;
+		public static int maxDim = 5;
 	}
 
 	//PARAMS DEF END

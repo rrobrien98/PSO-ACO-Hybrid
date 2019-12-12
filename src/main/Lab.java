@@ -6,14 +6,13 @@ public class Lab {
 
 	public static void main(String[] args) {
 		
-		int swarmSize = Integer.parseInt(args[0]);
-		int maxIter = Integer.parseInt(args[2]);
-		int maxDim = Integer.parseInt(args[4]);
-		
-		String fileName = "";
+		// graph settings
+		String graphFileName = "";
 		int numOf_colors = 10;
 		
-		Graph graph = new Graph(fileName, numOf_colors);
+		
+		// graph parsing
+		Graph graph = new Graph(graphFileName, numOf_colors);
 		
 		
 		// initialize PSO instance
@@ -24,9 +23,9 @@ public class Lab {
 				PSO.FinalSettings.velRanges,
 				PSO.FinalSettings.CHI,
 				PSO.FinalSettings.PHI,
-				swarmSize,
-				maxIter,
-				maxDim,
+				PSO.FinalSettings.swarmSize,
+				PSO.FinalSettings.maxIter,
+				PSO.FinalSettings.maxDim,
 				graph
 		);
 		PSO pso = new PSO(psoParams);
@@ -34,10 +33,7 @@ public class Lab {
 		// pso terminated
 		PSO.Result res = pso.getResult();
 		res.print();
-		
-		// start pso, get values from res, isolate max value
-		
-		
+				
 		
 		
 	}
