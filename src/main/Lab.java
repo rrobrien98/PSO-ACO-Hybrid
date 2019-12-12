@@ -1,5 +1,4 @@
 package main;
-import main.resources.PSO.Params;
 
 public class Lab {
 
@@ -11,18 +10,7 @@ public class Lab {
 		
 		// initialize PSO instance
 		System.out.println("Initializing Project ...");
-		main.resources.PSO.Params psoParams = new Params(
-				graphFileName,
-				PSO.Topology.ra,
-				PSO.FinalSettings.posRanges,
-				PSO.FinalSettings.velRanges,
-				PSO.FinalSettings.CHI,
-				PSO.FinalSettings.PHI,
-				PSO.FinalSettings.swarmSize,
-				PSO.FinalSettings.maxIter,
-				PSO.FinalSettings.maxDim
-		);
-		PSO pso = new PSO(psoParams);
+		PSO pso = new PSO(new main.resources.PSO.Params(graphFileName));
 		
 		// pso terminated
 		PSO.Result res = pso.getResult();

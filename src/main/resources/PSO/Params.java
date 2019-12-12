@@ -1,5 +1,6 @@
 package main.resources.PSO;
 import main.ACO;
+import main.PSO;
 import main.PSO.Topology;
 import main.resources.ACO.Graph;
 
@@ -17,25 +18,15 @@ public class Params {
 	
 	public main.resources.ACO.Params ACO_Params;
 
-	public Params(
-			String graphFileName,
-			Topology topology, 
-			double[] posRange,
-			double[] velRange,
-			double chi,
-			double phi,
-			int swarmSize,
-			int maxIter,
-			int maxDim
-		){
-		this.topology = topology;
-		this.posRange = posRange;
-		this.velRange = velRange;
-		this.chi = chi;
-		this.phi = phi;
-		this.swarmSize = swarmSize;
-		this.maxIter = maxIter;
-		this.maxDim = maxDim;
+	public Params(String graphFileName){
+		this.topology = PSO.Topology.ra;
+		this.posRange = PSO.FinalSettings.posRanges;
+		this.velRange = PSO.FinalSettings.velRanges;
+		this.chi = PSO.FinalSettings.CHI;
+		this.phi = PSO.FinalSettings.PHI;
+		this.swarmSize = PSO.FinalSettings.swarmSize;
+		this.maxIter = PSO.FinalSettings.maxIter;
+		this.maxDim = PSO.FinalSettings.maxDim;
 		this.initACO(graphFileName);
 	}
 
