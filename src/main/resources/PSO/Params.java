@@ -12,7 +12,7 @@ public class Params {
 	private int swarmSize;
 	private int maxIter;
 	private int maxDim;
-	
+		
 	
 	public main.resources.ACO.Params ACO_Params;
 
@@ -31,19 +31,17 @@ public class Params {
 	
 	// construct initial ACO params
 	private void initACO(String graphFileName){
-		Graph graph = new Graph(graphFileName, ACO.FinalSettings.graphDims, ACO.FinalSettings.numOf_colors);
+		Graph graph = new Graph(graphFileName, ACO.FinalSettings.graphDims);
 		ACO_Params = new main.resources.ACO.Params(
 				graph,
 				ACO.FinalSettings.numOf_ants,
 				ACO.FinalSettings.numOf_iter,
 				ACO.FinalSettings.alpha,
-				ACO.FinalSettings.beta,
 				ACO.FinalSettings.rho,
 				ACO.FinalSettings.eFactor,
 				ACO.FinalSettings.satLimit,
 				ACO.FinalSettings.timeLimit,
-				ACO.FinalSettings.optDist,
-				ACO.FinalSettings.numOf_colors
+				ACO.FinalSettings.optDist
 				);
 	}
 	

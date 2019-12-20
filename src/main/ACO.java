@@ -17,17 +17,16 @@ public class ACO {
 	
 	//PARAMS DEF START
 	public enum FinalSettings {;
-		public static int numOf_ants = 10;
+		public static int numOf_ants = 30;
 		public static int numOf_iter = 10;
 		public static double alpha = 1; // constriction Factor
 		public static double beta = 2; 
 		public static double rho = 0.1;
 		public static double eFactor = 20;
 		public static double satLimit = Double.MAX_VALUE;
-		public static long timeLimit = Long.MAX_VALUE;
+		public static long timeLimit = Long.MAX_VALUE; // 5 min
 		public static double optDist = Double.MAX_VALUE;
-		public static int numOf_colors = 10;
-		public static int graphDims = 3;
+		public static int graphDims = 15;
 	}
 	//PARAMS DEF END
 
@@ -52,6 +51,7 @@ public class ACO {
 		this.graph = params.getGraph();
 		this.iterCount = 0;
 		this.colony = new ArrayList<Ant>();
+		//System.out.println(this.params.getAlpha()+" "+this.params.getRho()+" "+this.params.getElitism_factor());
 		this.initialize_colony();
 		runACO();
 		duration = System.currentTimeMillis() - startTime;
@@ -106,9 +106,9 @@ public class ACO {
 			this.updatePheromone(graphDim);
 			// update best
 			Ant superAnt = this.graph.mergeAntTours(colony);
+			if(superAnt == null) continue;
 			if(superAnt.getTourLen() > this.bestPath.getTourLen()) {
 				this.bestPath = superAnt.clone();
-				System.out.println(superAnt.getTourLen());
 			}
 			for(Ant ant: colony) ant.reset(graph.getRandNode()); // reset ants after touring dimension
 		}
@@ -148,7 +148,7 @@ public class ACO {
 			total_prob += leg_prob;
 			probs.add(leg_prob);
 		}
-		if(total_prob == 0) ant.stop();
+		if(total_prob == 0 || Double.isNaN(total_prob)) ant.stop();
 		else {
 			//use a random percent of total probability to set next node index.
 			int index = -1;//city number
@@ -195,14 +195,18 @@ public class ACO {
 			}
 		}
 	//use a random percent of total probability to set next node index.
-		if (!colors.isEmpty()) {
-			int index = -1;//color number
-			total_prob *= rand.nextDouble();//random percent of total prob.
-			while (total_prob >= 0) {
-				index += 1;//next city
-				total_prob -= probs.get(index);//subtract node prob from total prob.
+		try {
+			if (!colors.isEmpty()) {
+				int index = -1;//color number
+				total_prob *= rand.nextDouble();//random percent of total prob.
+				while (total_prob >= 0) {
+					index += 1;//next city
+					total_prob -= probs.get(index);//subtract node prob from total prob.
+				}
+				if(index < probs.size())return colors.get(index);
 			}
-			return colors.get(index);
+		}catch(Exception e) {
+			return -1; // some unsolved bug!
 		}
 		
 		return -1;

@@ -1,5 +1,7 @@
 package main.resources.ACO;
 
+import java.util.Comparator;
+
 /*
  * Object to store a leg in a Traveling Sales Person problem.
  * Contains two variables. 
@@ -50,17 +52,34 @@ public class Leg {
 		return false;
 	}
 	
+
 	public void mergePheromones(Leg leg) {
 		for(int i=0; i<pheromones.length; i++) {
 			this.pheromones[i] += leg.getPheromone(i);
 		}
+	}
+	
+	public void averagePheromonesSum(int graphDims) {
+		for(int i=0; i<pheromones.length; i++) {
+			this.pheromones[i] /= graphDims;
+		}
+	}
+	
+	public void changeTo(Leg model) {
+		this.id = model.getId();
+		this.nodeA = model.getNodeA().clone();
+		this.nodeB = model.getNodeB().clone();
+		this.pheromones = model.getPheromoneArray().clone();
 	}
 
 	/*
 	 * Getters and setters for leg variables.
 	 */
 	public double getPheromone(int color) {
-		return pheromones[color];
+		return color == -1? pheromones[0] : pheromones[color];
+	}
+	public double getMaxPheromone() {
+		return color == -1? pheromones[0] : pheromones[color];
 	}
 	public void setPheromone(double pheromone, int color) {
 		this.pheromones[color] = pheromone;
@@ -93,5 +112,14 @@ public class Leg {
 		}
 		return total;
 	}
+	
+	static public class SortByPheromone implements Comparator<Leg>{
+		@Override
+		public int compare(Leg leg1, Leg leg2) {
+			return leg1.getPheromone(leg1.getColor()) < leg2.getPheromone(leg2.getColor())?-1:
+				(leg1.getPheromone(leg1.getColor()) == leg2.getPheromone(leg2.getColor())?0:1);
+		}
+	}
 }
+
 

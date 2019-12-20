@@ -12,7 +12,6 @@ import main.Lab;
 import main.Lab.Error;
 
 public class Graph {
-	private int colors;
 	private Random rand = new Random();
 	//private ArrayList<Leg> legs = new ArrayList<Leg>();
 	private ArrayList<Node> nodes = new ArrayList<Node>();
@@ -24,9 +23,8 @@ public class Graph {
 	private ArrayList<HashMap<Integer, Leg>> legsDims = new  ArrayList<HashMap<Integer, Leg>>();
 	
 	String filename;
-	public Graph(String filename, int dims, int colors) {
+	public Graph(String filename, int dims) {
 		this.filename = filename;
-		this.colors = colors;
 		this.numOf_legsDims = dims;
 		for(int i=0; i<dims; i++)this.legsDims.add(i,new HashMap<Integer, Leg>());
 		this.constructGraph();
@@ -80,6 +78,10 @@ public class Graph {
 	public int getNumOf_legsDims() {
 		return this.numOf_legsDims;
 	}
+	public int getNumOf_colors() {
+		int val = (int) Math.ceil((this.numOf_edges)/this.numOf_nodes);
+		return val;
+	}
 	
 	// returns non-colored adjacent nodes, given current node for given ant.
 	public ArrayList<Node> getClearNodes(Ant ant, int graphDim){
@@ -116,17 +118,16 @@ public class Graph {
 				legsDims.get(0).get(key).mergePheromones(leg); // add pheromones from other dims to dim[0]
 			}
 		}
-		// clone legs, then clone hasmap => new hashmap copy for higher dims
-		for(int i=1; i<this.numOf_legsDims; i++) {
-			HashMap<Integer, Leg> legsMapCopy = new HashMap<Integer, Leg>();
-			for(int key: this.getLegKeys(0)) {
-				legsMapCopy.put(key,legsDims.get(0).get(key).clone());	
-			}
-			legsDims.set(i, legsMapCopy); // update other graph dims to dim[0]
+		// make sure pheromone sums are averaged by the number of dims.. prevents continuous range increase
+		for(int key: this.getLegKeys(0)) { // get all legs from dim
+			legsDims.get(0).get(key).averagePheromonesSum(numOf_legsDims); // add pheromones from other dims to dim[0]
 		}
 		
-		for(int key: this.getLegKeys(0)) {
-			System.out.println("????? "+legsDims.get(1).get(key).getColor());
+		// clone legs, then clone hasmap => new hashmap copy for higher dims
+		for(int i=1; i<this.numOf_legsDims; i++) {
+			for(int key: this.getLegKeys(0)) {
+				legsDims.get(i).get(key).changeTo(legsDims.get(0).get(key));
+			}
 		}
 		return this.legsDims.get(0);
 	}
@@ -142,6 +143,7 @@ public class Graph {
 			tourNodes.addAll(ant.getTourNodes());
 			tourLegs.addAll(ant.getTourLegs());
 		}
+		if(tourNodes.size() == 0) return null;
 		Ant superAnt = new Ant(tourNodes, tourLegs);
 		return superAnt;
 	}
@@ -153,8 +155,14 @@ public class Graph {
 			int key = Integer.parseInt((""+nodeA.getId()) + (""+nodeB.getId()));
 			Leg leg = legsDims.get(i).get(key);
 			if(leg != null) return;
-			legsDims.get(i).put(key, new Leg(1/this.getNumOf_edges(), nodeA, nodeB,this.colors,key));
+			legsDims.get(i).put(key, new Leg(1/this.getNumOf_edges(), nodeA, nodeB,this.getNumOf_colors(),key));
 		}
+	}
+	
+	
+	// returrs the pheromone amount used to initialize legs
+	public double getMinPheromone() {
+		return 1/this.getNumOf_edges();
 	}
 	
 	

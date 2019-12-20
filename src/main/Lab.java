@@ -2,6 +2,7 @@ package main;
 
 public class Lab {
 	
+	
 	public static enum PosRanges {;
 		public static double[] alpha = {0,4};
 		public static double[] rho = {0,1};
@@ -9,10 +10,12 @@ public class Lab {
 	}
 	
 	public static enum VelRanges {;
-		public static double[] alpha = {-.3,.3};
-		public static double[] rho = {-.1,.1};
-		public static double[] eFactor = {-10,10};	
+		public static double[] alpha = {-1,1};
+		public static double[] rho = {-.5,.5};
+		public static double[] eFactor = {-40,40};	
 	}
+	
+	public static int RunDuration = 1000 * 60 * 5; //ms
 
 	public static void main(String[] args) {
 		

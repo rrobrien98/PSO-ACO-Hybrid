@@ -16,9 +16,9 @@ public class PSO {
 	public enum FinalSettings {;
 		public static double CHI = 0.7298; // constriction Factor
 		public static double PHI = 2.05; 
-		public static int swarmSize = 5;
+		public static int swarmSize = 10;
 		public static int maxIter = Integer.MAX_VALUE;
-		public static int maxDim = 5;
+		public static int maxDim = 3;
 	}
 	//PARAMS DEF END
 	
@@ -30,28 +30,32 @@ public class PSO {
 	Boolean bestFound = false;
 	int iterationCount = 0;
 	Random rand = new Random();
-	ArrayList<Integer> progress; //UI
+	long duration;
+
 	
 	public PSO(Params params){
 		this.params = params;
 		this.particles = new ArrayList<Particle>();
-		this.progress = new ArrayList<Integer>();
 		runPSO();
 	}
 	
 	// description
 	private void runPSO() {
+		long startTime = System.currentTimeMillis();
+		duration = startTime;
 		initParticles();
 		setNeighbors();
-		//System.out.print("Progress: "); //UI
-		while(iterationCount < params.getMaxIter() && !bestFound) {
-			_progressReport(); //UI
+		while(	iterationCount < params.getMaxIter() && 
+				!bestFound &&
+				duration < startTime+(long)Lab.RunDuration) {
 			evalParticles();
 			update_Pbests();
 			update_Gbest();
 			update_All_NHoodBest();
 			update_AllVel();
 			update_AllPos();
+			System.out.println(this.gBest.getCurrVal());
+			duration = System.currentTimeMillis() - startTime;
 			iterationCount++;
 		}
 	}
@@ -139,7 +143,7 @@ public class PSO {
 	private void update_AllPos() {
 		for (int i = 0; i < params.getSwarmSize(); i++) {
 			for(int d = 0; d < params.getMaxDim(); d++) {
-				double pos = particles.get(i).getPos_coorDim(d);
+				double pos = particles.get(i).getPos_coorDim(d); 
 				double vel = particles.get(i).getVel_coorDim(d);
 				particles.get(i).setPos_coorDim(d, pos+vel);
 			}
@@ -170,13 +174,11 @@ public class PSO {
 						params.ACO_Params.getNumOf_ants(), 
 						params.ACO_Params.getNumOf_iterations(), 
 						particle.getAlpha(),
-						particle.getBeta(),
 						particle.getRho(),
 						particle.getEFactor(),
 						params.ACO_Params.getSatLimit(), 
 						params.ACO_Params.getTimeLimit(), 
-						params.ACO_Params.getOptDist(),
-						params.ACO_Params.getColors())
+						params.ACO_Params.getOptDist())
 				).get_res();
 		return res.getBestPath().getTourLen();
 	}
@@ -224,13 +226,15 @@ public class PSO {
 
 	// descriptions
 	public Result getResult() {
-		return new Result(gBest, iterationCount, params.getTopology());
+		return new Result(gBest, iterationCount, params.getTopology(), duration);
 	}
 	class Result{
 		private Particle gBest;
 		private int iterationCount;
 		private Topology topology;
-		public Result(Particle gBest, int iterationCount, Topology topology) {
+		private long duration;
+		public Result(Particle gBest, int iterationCount, Topology topology, long duration) {
+			this.duration = duration;
 			this.gBest = gBest;
 			this.iterationCount = iterationCount;
 			this.topology = topology;
@@ -240,6 +244,7 @@ public class PSO {
 			System.out.println("Best Found: "+this.gBest.getCurrVal());
 			System.out.println("Topology: "+this.topology);
 			System.out.println("Iterations: "+this.iterationCount);
+			System.out.println("Duration: "+this.duration);
 		}
 		//getters
 		public Particle getGBest() {return gBest;}
@@ -248,18 +253,6 @@ public class PSO {
 	}
 	
 	
-	// shows progress in terminal -- UI
-	private void _progressReport() {
-		if(iterationCount != 0) {
-			double progress = ((double)iterationCount/(double)params.getMaxIter())*100;
-			for(int i=0; i<100; i+=5) {
-				if(this.progress.contains(i)) continue;
-				else if((int)progress > i) {
-					this.progress.add(i);
-					System.out.print(i+" ");
-				}
-			}
-		}
-	}
+
 			
 }

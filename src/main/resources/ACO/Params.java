@@ -13,14 +13,14 @@ public class Params {
 	//parameters controlling type of aco
 	private double optDist;
 	public Type type;
-	private int colors;
+	private int numOf_colors;
 	private int numOf_ants;
 	private int numOf_iterations;
 	//parameters for calculations
 	private double alpha;
 	private double beta;
 	private double rho;
-	private int elitism_factor;
+	private double elitism_factor;
 	private double epsilon;
 	private double q_0;
 	
@@ -31,18 +31,17 @@ public class Params {
 	 * Initialize parameters object for the Elitist Ant Colony type of ACO
 	 */
 	public Params(Graph graph, int num_ants, int num_iterations, double alpha,
-			double beta, double rho, double eFactor, double satLimit, long timeLimit, double optDist, int colors) {
+			double rho, double eFactor, double satLimit, long timeLimit, double optDist) {
 		this.numOf_ants = num_ants;
 		this.numOf_iterations = num_iterations;
 		this.alpha = alpha;
-		this.beta = beta;
 		this.rho = rho;
-		this.elitism_factor = num_ants;
+		this.elitism_factor = eFactor;
 		this.type = Type.eac;
 		this.satLimit = satLimit;
 		this.timeLimit = timeLimit;
 		this.optDist = optDist;
-		this.colors = colors;
+		this.numOf_colors = graph.getNumOf_colors();
 		this.graph = graph;
 	}
 
@@ -74,7 +73,7 @@ public class Params {
 	public double getRho() {
 		return rho;
 	}
-	public int getElitism_factor() {
+	public double getElitism_factor() {
 		return elitism_factor;
 	}
 	public double getEpsilon() {
@@ -106,7 +105,7 @@ public class Params {
 
 
 	public int getColors() {
-		return colors;
+		return numOf_colors;
 	}
 	
 }
