@@ -5,7 +5,9 @@ import java.util.Random;
 import main.Lab;
 
 
-
+/*
+ * Represents a single particle in a PSO swarm
+ */
 public class Particle {
 	
 	private ArrayList<Particle> neighbors;
@@ -18,7 +20,11 @@ public class Particle {
 	private double currVal;
 	private Random rand = new Random();
 	
-	
+	/*
+	 * Initializer for particle
+	 * sets it a random position and velocity in each of maxDim dimentions within the position and velocity ranges
+	 * Updates its best values and sets its neighbors
+	 */
 	public Particle(int maxDim) {
 		neighbors = new ArrayList<Particle>();
 		coords = new double[maxDim];
@@ -40,6 +46,9 @@ public class Particle {
 	}
 	
 	@SuppressWarnings("unchecked")
+	/*
+	 * Creates a new particle from given model
+	 */
 	public Particle(Particle model) {
 		currVal = model.currVal;
 		neighbors = (ArrayList<Particle>) model.neighbors.clone();

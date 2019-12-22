@@ -8,9 +8,10 @@ import main.resources.ACO.Leg;
 import main.resources.ACO.Node;
 
 /*
- * Class in control of running the entire ACO algorithm, whether it is EAC or ACS.
+ * Class in control of running the entire ACO algorithm. Runs our modified version of ECS
  * The aco can be terminated after a certain number of iterations, a certain amount of time,
- * or if it reaches a certain percentage of the optimal solution.
+ * or if it reaches a certain percentage of the optimal solution. Returns number of colored edges in graph to 
+ * calling PSO particle
  */
 public class ACO {
 	public enum Type {eac, acs};
@@ -24,7 +25,7 @@ public class ACO {
 		public static double rho = 0.1;
 		public static double eFactor = 20;
 		public static double satLimit = Double.MAX_VALUE;
-		public static long timeLimit = Long.MAX_VALUE; // 5 min
+		public static long timeLimit = Long.MAX_VALUE; 
 		public static double optDist = Double.MAX_VALUE;
 		public static int graphDims = 15;
 	}
@@ -59,7 +60,7 @@ public class ACO {
 	}
 	
 	/*
-	 * Initializes a colony of ants and gives them a random starting city.
+	 * Initializes a colony of ants and gives them a random starting node.
 	 * Sets bestPath to a random ant so it can be compared.
 	 */
 	public void initialize_colony() {
@@ -74,7 +75,7 @@ public class ACO {
 	 *  Runs the main loop of the ACO.
 	 *  First it sends the ants on parallel tours.
 	 *  Next it updates the best solution found.
-	 *  After that it updates the Pheremone on the TSP.
+	 *  After that it updates the Pheremone on the graph.
 	 *  Finally it resets all the ants and updates the iteration count and duration.
 	 */
 	public void runACO(){
@@ -91,11 +92,11 @@ public class ACO {
 	}
 	
 	/*
-	 * Runs a single tour of the ACO algorithm. Iterates through the number of cities and moves every ant
-	 * for each city. This allows the ants to build tours parallel to each other rather than one after the other.
+	 * Runs a single tour of the ACO algorithm. Iterates through the number graph dimensions and moves every ant
+	 * if the ant can color another edge. 
 	 */
 	public void tour() {
-		//until the tour has had time to visit every city keep going
+		//continue moving ants until all edges colored or all ants have stopped
 		for(int graphDim = 0; graphDim<this.graph.getNumOf_legsDims(); graphDim++) {
 			int tour_len = 0;
 			while (tour_len < this.graph.getNumOf_edges()) {
@@ -106,7 +107,7 @@ public class ACO {
 				tour_len++;
 			}
 			this.updatePheromone(graphDim);
-			// update best
+			// merge all pheremone updates
 			Ant superAnt = this.graph.mergeAntTours(colony);
 			if(superAnt == null) continue;
 			if(superAnt.getTourLen() > this.bestPath.getTourLen()) {
@@ -138,7 +139,7 @@ public class ACO {
 	 */
 	public void selectNext(Ant ant, int graphDim) {
 
-		//find all cities that haven't been visited.
+		//find all nodes that ant can go to next
 		ArrayList<Node> clearNodes = graph.getClearNodes(ant, graphDim);
 
 		ArrayList<Double> probs = new ArrayList<Double>();
@@ -150,6 +151,7 @@ public class ACO {
 			total_prob += leg_prob;
 			probs.add(leg_prob);
 		}
+		//stop the ants tour if no available nodes to visit
 		if(total_prob == 0 || Double.isNaN(total_prob)) ant.stop();
 		else {
 			//use a random percent of total probability to set next node index.
@@ -159,7 +161,7 @@ public class ACO {
 				index += 1;//next city
 				total_prob -= probs.get(index);//subtract node prob from total prob.
 			}
-			//move the ant to the next node.
+			//move ant to next node if we can find a color to assign to the edge
 			Node nextNode = clearNodes.get(index);
 			int color = colorPath(ant, nextNode, graphDim);
 			if(color != -1) {
@@ -167,14 +169,19 @@ public class ACO {
 				ant.moveToNode(nextNode, legId, color);
 				graph.getLeg(legId, graphDim).setColor(color);
 			}
+			//if couldn't color the edge stop the ants tour
 			else ant.stop();
 		}
 	}
-	
+	/*
+	 * method that loops through all colors that we could color this next leg, probabilistically selects one
+	 * based on pheremone concentrations
+	 */
 	private int colorPath(Ant ant, Node nextNode, int graphDim) {
-		// TODO method that loops through all colors that we could color this next leg, probabilistically selects one
-		ArrayList<Integer> used_colors = new ArrayList<Integer>();
 		
+		ArrayList<Integer> used_colors = new ArrayList<Integer>();
+		//create list of colors that we cant use on this edge by looping through current node and dest nodes
+		//neighbor node edges
 		for (Node neighbor : ant.getCurrNode().getNeighbors()) {
 			Leg leg = this.graph.getLeg(ant.getCurrNode(), neighbor, graphDim);
 			if (leg.getColor() != -1) used_colors.add(leg.getColor());
@@ -196,21 +203,21 @@ public class ACO {
 				colors.add(i);
 			}
 		}
-	//use a random percent of total probability to set next node index.
+	//use a random percent of total probability to set next color index.
 		try {
 			if (!colors.isEmpty()) {
 				int index = -1;//color number
 				total_prob *= rand.nextDouble();//random percent of total prob.
 				while (total_prob >= 0) {
-					index += 1;//next city
-					total_prob -= probs.get(index);//subtract node prob from total prob.
+					index += 1;
+					total_prob -= probs.get(index);
 				}
 				if(index < probs.size())return colors.get(index);
 			}
 		}catch(Exception e) {
 			return -1; // some unsolved bug!
 		}
-		
+		//return -1 if no color we could assign to edge
 		return -1;
 	
 	
@@ -222,14 +229,12 @@ public class ACO {
 	
 	/*
 	 * Updates the pheromone for the EAC type of ACO.
-	 * First it uses nested for loops to iterate through every leg. In order to avoid extra work only 
-	 * half of the legs are calculated because the TSP problems are symmetrical.
-	 * Then it dissipates the pheremone for each leg and checks if the best path traveled the leg.
-	 * If the best path did travel the leg it adds the elitist pheremone to the leg.
-	 * Then updates both directions of the leg to the new pheremone level.
+	 * First it uses nested for loops to iterate through every leg in every dimension of the graph.
+	 * Then it iterates through all the ants and updates the pheremone on a leg according to what color each ant 
+	 * colored that leg
 	 */
 	public void updatePheromone(int graphDim) {
-		//iterate through every city. Have to do this via the nodes because legs is a hashtable, not iteratable
+		//iterate through every node. Have to do this via the nodes because legs is a hashtable, not iteratable
 		for(int key: graph.getLegKeys(graphDim)) {
 			Leg leg = graph.getLeg(key, graphDim);
 			double[] pheromone = leg.getPheromoneArray();
@@ -239,10 +244,11 @@ public class ACO {
 			//add pheromone for every ant that traveled the leg
 			for(Ant ant: colony) {
 				if(ant.tourHasLeg(leg)) {
+					//only add pheremone at index of ants color on that leg
 					pheromone[leg.getColor()] += this.params.getElitism_factor()*ant.getTourLen(); // (1/ant.getDist)
 				}
 			}
-			//if the best path travels the leg add pheremone.
+		
 			this.graph.setPheromone(leg, pheromone);//set the leg to the new pheromone.
 		}	
 	}
@@ -254,7 +260,7 @@ public class ACO {
 
 
 	/*
-	 * Resets the ants tour arrays and puts them at a random city.
+	 * Resets the ants tour arrays and puts them at a random node.
 	 */
 	public void resetAnts() {
 		//iterate through every ant.

@@ -10,8 +10,8 @@ public class PSO {
 	public enum Topology { 
 		gl, ri, vn, ra, _error;
 		public static int RA_NHOOD_SIZE = 5;
-		public static int VN_ARRAY_HEIGHT = 4; // description
-		public static int VN_ARRAY_WIDTH = 4;  // same here..
+		public static int VN_ARRAY_HEIGHT = 4; 
+		public static int VN_ARRAY_WIDTH = 4;  
 	};
 	public enum FinalSettings {;
 		public static double CHI = 0.7298; // constriction Factor
@@ -39,7 +39,9 @@ public class PSO {
 		runPSO();
 	}
 	
-	// description
+	/*
+	 * runs pso algorithm, only needs to take in params object
+	 */
 	private void runPSO() {
 		long startTime = System.currentTimeMillis();
 		duration = startTime;
@@ -62,7 +64,10 @@ public class PSO {
 	}
 	
 	
-	// description
+	/*
+	 * Initializes particles and neighbors
+	 * then loops through PSO process until max iterations or runtime is hit
+	 */
 	private void initParticles() {
 		for (int i = 0; i < params.getSwarmSize(); i++) {
 			particles.add(new Particle(params.getMaxDim()));
@@ -85,7 +90,9 @@ public class PSO {
 		default: Lab.throwError(Lab.Error.topology);
 		}
 	}
-	// description
+	/*
+	 * Assigns neighbors to each particle randomly
+	 */
 	private void setRandNeighbors() {
 		int k = Topology.RA_NHOOD_SIZE;
 		for (int i = 0; i < particles.size(); i++) {
@@ -97,7 +104,9 @@ public class PSO {
 			}
 		}
 	}
-	// description
+	/*
+	 * assigns neighbors to each particle based on von neuman topology
+	 */
 	private void setVnNeighbors() {
 		int arrHeight = Topology.VN_ARRAY_HEIGHT;
 		int arrWidth = Topology.VN_ARRAY_WIDTH;
@@ -117,7 +126,9 @@ public class PSO {
 			} else { particles.get(i).addNb(particles.get(i+arrWidth));}
 		}
 	}
-	//description
+	/*
+	 * assigns neighbors to each particle based on ring topology
+	 */
 	private void setRingNeighbors() {
 		for (int i = 0; i < particles.size(); i++) {
 			particles.get(i).addNb(particles.get(((i-1) + particles.size())%particles.size()));
@@ -132,7 +143,9 @@ public class PSO {
 	 *  ---- PARTICLES EVALUATIONS ----
 	 */
 	
-	// description
+	/*
+	 * Updates the velocities of all particles in the swarm
+	 */
 	private void update_AllVel() {
 		for (int i = 0; i < params.getSwarmSize(); i++) {
 			for(int d = 0; d < params.getMaxDim(); d++) {
@@ -149,7 +162,9 @@ public class PSO {
 			}	
 		}
 	}
-	// description
+	/*
+	 * Updates positions of all particles in swarm
+	 */
 	private void update_AllPos() {
 		for (int i = 0; i < params.getSwarmSize(); i++) {
 			for(int d = 0; d < params.getMaxDim(); d++) {
@@ -159,7 +174,9 @@ public class PSO {
 			}
 		}
 	} 
-	// description
+	/*
+	 * Initializes instance of ACO with params set according to current position in solution space
+	 */
 	private void evalParticles() {
 		for (int i = 0; i < params.getSwarmSize(); i++) {
 			Particle particle = particles.get(i);
@@ -176,7 +193,9 @@ public class PSO {
 	 *  ---- ACO TEST FUNCTION  ----
 	 */
 	
-	// description
+	/*
+	 * Creates ACO params object using particles position, runs ACO, and returns the number of cities colored in graph
+	 */
 	private int evalACO(Particle particle) {
 		ACO.Result res = new ACO(
 				new main.resources.ACO.Params(
@@ -200,16 +219,22 @@ public class PSO {
 	 *  ---- UPDATE SEARCH STATES  ----
 	 */
 	
-	// description
+	/*
+	 * Updates the personal bests of particles if current pos is better than their previous results
+	 */
 	private void update_Pbests() {
 		for (int i = 0; i < this.particles.size(); i++) {
 			Particle currParticle = this.particles.get(i);
+			//notice that in this case better == bigger
 			if (currParticle.getCurrVal() > currParticle.getPbestval()) {
 				currParticle.setPbestval(currParticle.getCurrVal());
 				currParticle.setPbest(currParticle.getCoords().clone());
 			}
 		}
 	}
+	/*
+	 * Updates the global bests for all particles if a new gb has been found
+	 */
 	private void update_Gbest() {
 		Particle iterBest = particles.get(1).clone();
 		for (int i = 0; i < this.particles.size(); i++) {
@@ -217,6 +242,7 @@ public class PSO {
 			if (currParticle.getCurrVal() > iterBest.getCurrVal()) {
 				iterBest = currParticle.clone();
 			}
+			//create new best particle object
 			if (currParticle.getCurrVal() > gBest.getCurrVal()) {
 				gBest = currParticle.clone();
 				if(gBest.getCurrVal() >= params.ACO_Params.getGraph().getNumOf_edges()) bestFound = true;
@@ -224,10 +250,14 @@ public class PSO {
 		}
 		System.out.println("best found: " + iterBest.getCurrVal());
 	}
+	/*
+	 * update neighborhood best for particles if new one has been found
+	 */
 	private void update_All_NHoodBest() {
 		for (int i = 0; i < this.particles.size(); i++) {
 			Particle currParticle = particles.get(i);
 			for (int j = 0; i < currParticle.getNhood().size(); i++) {
+				//loop through and check all neighbors
 				if (currParticle.getNhood().get(j).getCurrVal() < currParticle.getCurrVal()) {
 					currParticle.setNhoodBestval(currParticle.getNhood().get(j).getCurrVal());
 					currParticle.setNhoodBest(currParticle.getNhood().get(j).getCoords().clone());
@@ -239,7 +269,9 @@ public class PSO {
 
 
 
-	// descriptions
+	/*
+	 * Subclass that contains all relevant info for a completed run of PSO
+	 */
 	public Result getResult() {
 		return new Result(gBest, iterationCount, params.getTopology(), duration);
 	}

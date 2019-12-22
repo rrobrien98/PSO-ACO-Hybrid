@@ -2,13 +2,13 @@ package main;
 
 public class Lab {
 	
-	
+	//sets limits on param values. needed because some params give nonsensical results
 	public static enum PosRanges {;
 		public static double[] alpha = {0,4};
 		public static double[] rho = {0,1};
 		public static double[] eFactor = {0,100};
 	}
-	
+	//set limit on ranges of velocities
 	public static enum VelRanges {;
 		public static double[] alpha = {-1,1};
 		public static double[] rho = {-.5,.5};

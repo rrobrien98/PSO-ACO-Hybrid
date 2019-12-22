@@ -1,16 +1,21 @@
 package main.resources.ACO;
 
 import java.util.ArrayList;
-
+/*
+ * Represents a node in the graph
+ */
 public class Node {
 	
 	private int id;
+	//neighbors list contains all the nodes that are adjacent to this node
 	private ArrayList<Node> neighbors = new ArrayList<Node>();
 
 	public Node(int id) {
 		this.id = id;
 	}
-	
+	/*
+	 * clones a model node
+	 */
 	public Node(Node model) {
 		this.id = model.id;
 		this.neighbors = model.neighbors;

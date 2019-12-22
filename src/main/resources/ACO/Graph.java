@@ -10,10 +10,11 @@ import java.util.Random;
 
 import main.Lab;
 import main.Lab.Error;
-
+/*
+ * represents a graph coloring problem with a list of nodes and connecting edges/legs
+ */
 public class Graph {
 	private Random rand = new Random();
-	//private ArrayList<Leg> legs = new ArrayList<Leg>();
 	private ArrayList<Node> nodes = new ArrayList<Node>();
 	private double numOf_nodes;
 	private double numOf_edges = 0;
@@ -23,12 +24,19 @@ public class Graph {
 	private ArrayList<HashMap<Integer, Leg>> legsDims = new  ArrayList<HashMap<Integer, Leg>>();
 	
 	String filename;
+	/*
+	 * initialize graph object with the filename of file to parse graph info from and the number of 
+	 * Dimensions(number of graphs to be solved simultaneously then merged)
+	 */
 	public Graph(String filename, int dims) {
 		this.filename = filename;
 		this.numOf_legsDims = dims;
 		for(int i=0; i<dims; i++)this.legsDims.add(i,new HashMap<Integer, Leg>());
 		this.constructGraph();
 	}
+	/*
+	 * parses input file of graph into list of nodes and legs
+	 */
 	public void constructGraph() {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(this.filename));
@@ -37,8 +45,9 @@ public class Graph {
 			Boolean readNodes = false;
 			while(((line = br.readLine())!=null)) {
 				String[] parts = line.trim().split(" ");
-				//once it finds the first city start storing coordinates
+				
 				if (!line.trim().startsWith("%")) firstEdge = true;
+				//parses number of nodes and edges from file header
 				else if(readNodes) {
 					for (int i = 0; i < Integer.parseInt(parts[2]); i++) {
 						nodes.add(new Node(i));
@@ -46,8 +55,11 @@ public class Graph {
 					this.numOf_nodes = Double.parseDouble(parts[2]);
 					this.numOf_edges = Double.parseDouble(parts[1]);
 				}
+				//first line contains nothing
 				else readNodes = true;
+				//create leg object from line describing a leg, set neighbors accordingly
 				if(firstEdge) {
+					//all nodes already initialized
 					Node nodeA = this.nodes.get(Integer.parseInt(parts[0])-1);
 					Node nodeB = this.nodes.get(Integer.parseInt(parts[1])-1);
 					nodeA.addNeighbor(nodeB);
@@ -83,7 +95,9 @@ public class Graph {
 		return val;
 	}
 	
-	// returns non-colored adjacent nodes, given current node for given ant.
+	/*
+	 *  returns non-colored adjacent nodes, given current node for given ant.
+	 */
 	public ArrayList<Node> getClearNodes(Ant ant, int graphDim){
 		ArrayList<Node> clearNodes = new ArrayList<Node>();
 		Node currNode = ant.getCurrNode();
@@ -110,7 +124,9 @@ public class Graph {
 	
 	
 	
-	// returns graph from merged of previous iteration
+	/*
+	 *  returns graph from merged of previous iteration
+	 */
 	public HashMap<Integer, Leg> mergeDims(){
 		for(int i=1; i<this.numOf_legsDims; i++) {
 			for(int key: this.getLegKeys(i)) { // get all legs from dim
@@ -133,9 +149,11 @@ public class Graph {
 	}
 
 	
-	// returns a new ant with tour equals to all inputed ants' combined tours.
-	// note: tours are combined from low index to high index, assuming that inputs has ants arranged
-	// 			so that last node from ant[i] is adjacent to first node from ant[i+1]
+	/*
+	 *  returns a new ant with tour equals to all inputed ants' combined tours.
+	 *note: tours are combined from low index to high index, assuming that inputs has ants arranged
+	 *so that last node from ant[i] is adjacent to first node from ant[i+1]
+	 */
 	public Ant mergeAntTours(ArrayList<Ant> colony) {
 		ArrayList<Node> tourNodes = new ArrayList<Node>();
 		ArrayList<Integer> tourLegs = new ArrayList<Integer>();
@@ -145,11 +163,14 @@ public class Graph {
 		}
 		if(tourNodes.size() == 0) return null;
 		Ant superAnt = new Ant(tourNodes, tourLegs);
+		//will be used to get num of edges colored
 		return superAnt;
 	}
 	
 	
-	// add new leg to leg collections. order of params does not matter
+	/*
+	 *  add new leg to leg collections. order of params does not matter
+	 */
 	public void addLeg(Node nodeA, Node nodeB) {
 		for(int i=0; i<this.numOf_legsDims; i++) {
 			int key = Integer.parseInt((""+nodeA.getId()) + (""+nodeB.getId()));
@@ -160,14 +181,18 @@ public class Graph {
 	}
 	
 	
-	// returrs the pheromone amount used to initialize legs
+	/*
+	 *  returns the pheromone amount used to initialize legs
+	 */
 	public double getMinPheromone() {
 		return 1/this.getNumOf_edges();
 	}
 	
 	
-	// return leg by using identifiers from each node - i.e. int node.id
-	// order of params does not matter.. 
+	/*
+	 *  return leg by using identifiers from each node - i.e. int node.id
+	 *order of params does not matter.. 
+	 */
 	public Leg getLeg(Node nodeA, Node nodeB, int graphDim) {
 		int key1 = Integer.parseInt((""+nodeA.getId()) + (""+nodeB.getId()));
 		int key2 = Integer.parseInt((""+nodeB.getId()) + (""+nodeA.getId()));
@@ -180,7 +205,9 @@ public class Graph {
 	}
 	
 	
-	//returns keys for all legs
+	/*
+	 * returns keys for all legs
+	 */
 	public ArrayList<Integer> getLegKeys(int graphDim){
 		ArrayList<Integer> visited = new ArrayList<Integer>();
 		for(Node node: this.getNodes()) for(Node ne: node.getNeighbors()) {
@@ -195,7 +222,10 @@ public class Graph {
 	}
 	
 	
-	// set pheromone to leg
+	/*
+	 *  set pheromone to leg
+	 *  parameter pheremone is vector of pheremones for all colors
+	 */
 	public void setPheromone(Leg leg, double[] pheromone) {
 		for (int i = 0; i < pheromone.length;i++) {
 			leg.setPheromone(pheromone[i], i);

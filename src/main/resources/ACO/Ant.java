@@ -2,14 +2,19 @@ package main.resources.ACO;
 
 import java.util.ArrayList;
 
+/*
+ * represents a single and that will make tours through the graph
+ */
 public class Ant {
 	
-	private ArrayList<Node> tourNodes;
-	private ArrayList<Integer> tourLegs;
-	private Node currNode;
-	private boolean stop;
+	private ArrayList<Node> tourNodes;//nodes the ant has visited
+	private ArrayList<Integer> tourLegs;//legs it has crossed
+	private Node currNode;//current node
+	private boolean stop;//tells whether ant has finished tour(cant color any more edges)
 	
-	// default init ant
+	/*
+	 * default initializer, takes starting node
+	 */
 	public Ant(Node node) {
 		this.setTour(new ArrayList<Node>());
 		this.tourLegs = new ArrayList<Integer>();
@@ -17,7 +22,9 @@ public class Ant {
 		this.stop = false;
 	}
 	
-	// create ant with tour already performed -- used to combine ant tours
+	/*
+	 *  create ant with tour already performed -- used to combine ant tours
+	 */
 	@SuppressWarnings("unchecked")
 	public Ant(ArrayList<Node> tourNodes, ArrayList<Integer> tourLegs) {
 		this.tourNodes = (ArrayList<Node>) tourNodes.clone();
@@ -26,7 +33,9 @@ public class Ant {
 		this.stop = true;
 	}
 	
-	// cloning
+	/*
+	 * used for ant cloning
+	 */
 	@SuppressWarnings("unchecked")
 	public Ant(Ant model) {
 		this.currNode = model.currNode;
@@ -54,14 +63,18 @@ public class Ant {
 		return this.tourLegs.contains(leg.getId());
 	}
 	
-
+	/*
+	 * moves an ant to a new node across given leg and colors that leg
+	 */
 	public void moveToNode(Node node, int legId, int color) {
 		this.setCurrNode(node);
 		this.tourNodes.add(node);
 		this.tourLegs.add(legId);
 	}
 	
-	
+	/*
+	 * resets ants tours and puts sit back at given node
+	 */
 	public void reset(Node node){
 		this.setCurrNode(node);
 		this.tourNodes = new ArrayList<Node>();

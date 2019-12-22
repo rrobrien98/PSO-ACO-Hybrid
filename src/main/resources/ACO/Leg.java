@@ -3,9 +3,8 @@ package main.resources.ACO;
 import java.util.Comparator;
 
 /*
- * Object to store a leg in a Traveling Sales Person problem.
- * Contains two variables. 
- * The amount of pheremone on the leg and the distance of the leg
+ * Object to store a leg in graph. 
+ * Contains the vector of pheremones for each color on the leg, the nodes it bridges, and its id
  */
 public class Leg {
 	
@@ -18,7 +17,7 @@ public class Leg {
 	
 	
 	/*
-	 * constructor for a leg. Takes an initial amount of pheremone and a distance
+	 * constructor for a leg. Takes the initial pheremone concentration, the end nodes, the number of colors in the graph, and its id
 	 */
 	public Leg(double startPheromone, Node nodeA ,Node nodeB, int numOf_colors, int id) {
 		this.pheromones = new double[numOf_colors];
@@ -29,7 +28,9 @@ public class Leg {
 		this.id = id;
 	}
 	
-	
+	/*
+	 * Clones a leg object
+	 */
 	public Leg(Leg model) {
 		this.id = model.getId();
 		this.nodeA = model.getNodeA().clone();
@@ -43,7 +44,9 @@ public class Leg {
 		this.color = -1;
 	}
 	
-
+	/*
+	 * Checks if a leg goes from nodeA to nodeB
+	 */
 	public boolean hasNodes(Node nodeA, Node nodeB) {
 		if(this.nodeA.equals(nodeA) && this.nodeB.equals(nodeB) ||
 			this.nodeB.equals(nodeA) && this.nodeA.equals(nodeB)) {
@@ -52,19 +55,25 @@ public class Leg {
 		return false;
 	}
 	
-
+	/*
+	 * Adds the pheremone vectors of two different legs
+	 */
 	public void mergePheromones(Leg leg) {
 		for(int i=0; i<pheromones.length; i++) {
 			this.pheromones[i] += leg.getPheromone(i);
 		}
 	}
-	
+	/*
+	 * Calculates the average pheremone concentration across all graph dimensions
+	 */
 	public void averagePheromonesSum(int graphDims) {
 		for(int i=0; i<pheromones.length; i++) {
 			this.pheromones[i] /= graphDims;
 		}
 	}
-	
+	/*
+	 * Changes this leg to match parameters of a model leg
+	 */
 	public void changeTo(Leg model) {
 		this.id = model.getId();
 		this.nodeA = model.getNodeA().clone();
@@ -104,15 +113,19 @@ public class Leg {
 	public Node getNodeA() {return nodeA;}
 	public Node getNodeB() {return nodeB;}
 
+	/*
+	 * returns the sum of all components in pheromone vector
+	 */
 	public double getTotalPheremone() {
-		// TODO Auto-generated method stub
 		double total = 0;
 		for (int i = 0; i < this.pheromones.length; i++) {
 			total += this.pheromones[i];
 		}
 		return total;
 	}
-	
+	/*
+	 * Comparator class used for sorting leg by pheremone concentration of the color they have been assigned
+	 */
 	static public class SortByPheromone implements Comparator<Leg>{
 		@Override
 		public int compare(Leg leg1, Leg leg2) {

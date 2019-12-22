@@ -3,11 +3,13 @@ import main.ACO;
 import main.PSO;
 import main.PSO.Topology;
 import main.resources.ACO.Graph;
-
+/*
+ * holds the parameters for a PSO object
+ */
 public class Params {
 	
 	private Topology topology;
-	private double chi; // constriction Factor
+	private double chi; 
 	private double phi;
 	private int swarmSize;
 	private int maxIter;
