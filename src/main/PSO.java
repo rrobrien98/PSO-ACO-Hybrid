@@ -17,7 +17,7 @@ public class PSO {
 		public static double CHI = 0.7298; // constriction Factor
 		public static double PHI = 2.05; 
 		public static int swarmSize = 10;
-		public static int maxIter = Integer.MAX_VALUE;
+		public static int maxIter = 30;
 		public static int maxDim = 3;
 	}
 	//PARAMS DEF END
@@ -54,7 +54,8 @@ public class PSO {
 			update_All_NHoodBest();
 			update_AllVel();
 			update_AllPos();
-			System.out.println(this.gBest.getCurrVal());
+			System.out.println("\n--PSO iteration complete--");
+			System.out.println("best value so far: " + this.gBest.getCurrVal() + "\n");
 			duration = System.currentTimeMillis() - startTime;
 			iterationCount++;
 		}
@@ -101,10 +102,19 @@ public class PSO {
 		int arrHeight = Topology.VN_ARRAY_HEIGHT;
 		int arrWidth = Topology.VN_ARRAY_WIDTH;
 		for (int i = 0; i < particles.size(); i++) {
-			particles.get(i).addNb(particles.get(((i-1) + arrHeight*arrWidth)%arrHeight*arrWidth));
-			particles.get(i).addNb(particles.get(((i+1))%arrHeight*arrWidth));
-			particles.get(i).addNb(particles.get(((i-arrWidth) + arrHeight*arrWidth)%arrHeight*arrWidth));
-			particles.get(i).addNb(particles.get(((i+arrWidth))%arrHeight*arrWidth));
+			//add neighbor to the left.
+			if (i%arrWidth == 0) { particles.get(i).addNb(particles.get(i+arrWidth-1));
+			} else { particles.get(i).addNb(particles.get(i-1));}
+			//get neighbor to the right.
+			if (i%arrWidth == arrWidth-1) { particles.get(i).addNb(particles.get(i-(arrWidth-1)));
+			} else { particles.get(i).addNb(particles.get(i+1));}
+			//get neighbor above.
+			if (i < arrWidth) { particles.get(i).addNb(particles.get(i+(arrHeight*arrWidth)-arrWidth));
+			} else {particles.get(i).addNb(particles.get(i-arrWidth));}
+			//get neighbor below.
+			if (i >= (arrWidth*arrHeight)-arrWidth) { particles.get(i).addNb(particles.get(
+					i-((arrWidth*arrHeight)-arrWidth)));
+			} else { particles.get(i).addNb(particles.get(i+arrWidth));}
 		}
 	}
 	//description
@@ -201,13 +211,18 @@ public class PSO {
 		}
 	}
 	private void update_Gbest() {
+		Particle iterBest = particles.get(1).clone();
 		for (int i = 0; i < this.particles.size(); i++) {
 			Particle currParticle = particles.get(i);
+			if (currParticle.getCurrVal() > iterBest.getCurrVal()) {
+				iterBest = currParticle.clone();
+			}
 			if (currParticle.getCurrVal() > gBest.getCurrVal()) {
 				gBest = currParticle.clone();
 				if(gBest.getCurrVal() >= params.ACO_Params.getGraph().getNumOf_edges()) bestFound = true;
 			}
 		}
+		System.out.println("best found: " + iterBest.getCurrVal());
 	}
 	private void update_All_NHoodBest() {
 		for (int i = 0; i < this.particles.size(); i++) {

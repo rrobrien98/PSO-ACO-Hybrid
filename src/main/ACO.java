@@ -18,7 +18,7 @@ public class ACO {
 	//PARAMS DEF START
 	public enum FinalSettings {;
 		public static int numOf_ants = 30;
-		public static int numOf_iter = 10;
+		public static int numOf_iter = 20;
 		public static double alpha = 1; // constriction Factor
 		public static double beta = 2; 
 		public static double rho = 0.1;
@@ -51,9 +51,10 @@ public class ACO {
 		this.graph = params.getGraph();
 		this.iterCount = 0;
 		this.colony = new ArrayList<Ant>();
-		//System.out.println(this.params.getAlpha()+" "+this.params.getRho()+" "+this.params.getElitism_factor());
+		System.out.println(this.params.getAlpha()+" "+this.params.getRho()+" "+this.params.getElitism_factor());
 		this.initialize_colony();
 		runACO();
+		System.out.println();
 		duration = System.currentTimeMillis() - startTime;
 	}
 	
@@ -83,6 +84,7 @@ public class ACO {
 				bestPath.getTourLen() < params.getSatLimit() &&
 				duration < params.getTimeLimit()){
 			this.tour();
+			System.out.print(" " + bestPath.getTourLen() + " ");
 			iterCount++;//update iterations
 			duration = System.currentTimeMillis() - startTime;//update duration
 		}
@@ -153,7 +155,7 @@ public class ACO {
 			//use a random percent of total probability to set next node index.
 			int index = -1;//city number
 			total_prob *= rand.nextDouble();//random percent of total prob.
-			while (total_prob >= 0) {
+			while (total_prob >= 0 && index < probs.size()-1) {
 				index += 1;//next city
 				total_prob -= probs.get(index);//subtract node prob from total prob.
 			}
